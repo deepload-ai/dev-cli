@@ -13,15 +13,23 @@ else
     exit 1
 fi
 
-# Assuming releases are hosted on GitHub
-# URL="https://github.com/your-repo/dev-cli/releases/latest/download/devenv-cli-$TARGET"
-echo "📥 Detected architecture: $TARGET"
-echo "📥 Downloading devenv-cli for $TARGET..."
+# We fetch the latest release from GitHub
+REPO="deepload-ai/dev-cli"
+LATEST_RELEASE=$(curl -s https://api.github.com/repos/$REPO/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
-# Mocking the download since this is a demonstration
-# curl -sSfL "$URL" -o /tmp/devenv-cli
-# chmod +x /tmp/devenv-cli
-# sudo mv /tmp/devenv-cli /usr/local/bin/devenv-cli
+if [ -z "$LATEST_RELEASE" ]; then
+    # Fallback if no release exists yet
+    echo "⚠️  No GitHub release found for $REPO yet. The CLI might not be published."
+    echo "⚠️  Please clone the repository and build from source using 'cargo build --release'."
+    exit 1
+fi
+
+URL="https://github.com/$REPO/releases/download/$LATEST_RELEASE/devenv-cli-$TARGET"
+echo "📥 Downloading devenv-cli $LATEST_RELEASE for $TARGET..."
+
+curl -sSfL "$URL" -o /tmp/devenv-cli
+chmod +x /tmp/devenv-cli
+sudo mv /tmp/devenv-cli /usr/local/bin/devenv-cli
 
 echo "✅ DevEnv CLI installed successfully to /usr/local/bin/devenv-cli"
 echo "👉 Run 'devenv-cli install' to start setting up your environment."

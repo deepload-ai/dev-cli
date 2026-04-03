@@ -22,10 +22,10 @@ DevEnv CLI 是一款专为 **Ubuntu 20.04+ (x86_64 / ARM64)** 打造的自动化
 ## 🚀 安装与使用
 
 ### 1. 一键安装 DevEnv CLI
-在您的 Ubuntu 服务器终端中执行以下命令（*当前为演示脚本，实际部署后替换为真实的 GitHub Release URL*）：
+在您的 Ubuntu 服务器终端中执行以下命令，即可一键下载并安装最新版的 CLI 工具（*需在 GitHub Releases 中上传对应二进制资产后生效*）：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-repo/dev-cli-1/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/deepload-ai/dev-cli/main/install.sh | bash
 ```
 
 ### 2. 启动环境配置
