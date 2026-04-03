@@ -1,0 +1,18 @@
+[package]
+name = "devenv-cli"
+version = "0.1.0"
+edition = "2021"
+authors = ["Trae Dev <dev@example.com>"]
+description = "A CLI tool to automatically install and configure development environments for Ubuntu, optimized for AI coding agents."
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+dialoguer = "0.11"
+tokio = { version = "1.32", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+reqwest = { version = "0.11", features = ["json", "blocking"] }
+anyhow = "1.0"
+whoami = "1"
+tempfile = "3.8"
+console = "0.15"
