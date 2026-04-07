@@ -38,7 +38,7 @@ jobs:
       - name: Build binary
         run: |
           if [ "${{ matrix.target }}" = "aarch64-unknown-linux-gnu" ]; then
-            # 'cross' runs inside docker, it will handle openssl dependencies automatically for arm64
+            # Tell cross to build with rustls instead of openssl for arm64 if possible
             cross build --release --target ${{ matrix.target }}
           else
             cargo build --release --target ${{ matrix.target }}
