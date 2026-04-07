@@ -4,10 +4,12 @@
 
 **一键为你的 AI 编程代理（Claude Code, Cursor, OpenClaw 等）配置最佳 Ubuntu 开发环境**
 
-[![OS](https://img.shields.io/badge/OS-Ubuntu_20.04+-orange.svg)]()
-[![Arch](https://img.shields.io/badge/Arch-x86__64_|_ARM64-blue.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-green.svg)]()
-[![Rust](https://img.shields.io/badge/Built_with-Rust-red.svg)]()
+[![OS](https://img.shields.io/badge/OS-Ubuntu_20.04+-orange.svg)](https://ubuntu.com/)
+[![Arch](https://img.shields.io/badge/Arch-x86__64_|_ARM64-blue.svg)](https://en.wikipedia.org/wiki/X86-64)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Rust](https://img.shields.io/badge/Built_with-Rust-red.svg)](https://www.rust-lang.org/)
+
+[English](./README_EN.md) · [简体中文](./README.md)
 
 [快速开始](#-快速上手) · [支持的环境列表](#-支持的环境与工具) · [设计理念](#-为什么需要-devenv-cli)
 
@@ -132,6 +134,11 @@ DEVENV_DRY_RUN=1 devenv-cli install --auto
 *此时 CLI 将进入空跑模式，在控制台精确打印出所有意图执行的底层 Shell 命令。*
 
 ---
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=deepload-ai/dev-cli&type=Date)](https://star-history.com/#deepload-ai/dev-cli&Date)
+
 <div align="center">
 Made with ❤️ for AI Agents.
 </div>
