@@ -36,6 +36,18 @@ In the time it takes to drink a cup of coffee, your Ubuntu server transforms int
 
 ---
 
+## ⚠️ Prerequisites & Use Cases
+
+This project has been rigorously tested and verified on **Ubuntu 24.04 LTS**.
+
+**Core Use Case**:
+This tool delivers maximum value when your AI coding agents (e.g., Claude Code, Codex, OpenClaw, etc.) are installed in a regular user's home directory (`~/`) and run as a **non-Root standard user**.
+
+**How It Works**:
+AI agents typically run in restricted, non-interactive shells without `sudo` privileges. If they need to invoke `node`, `python`, `cargo`, or `adb`, they often crash due to missing environment variables or `EACCES` permission denials. DevEnv CLI specifically addresses this pain point: during installation, it pre-maps all essential binaries to the globally accessible `/usr/local/bin`, while securely returning package manager write permissions back to the `~/` directory. This ensures AI agents can not only **seamlessly invoke** any command but also **safely install** third-party dependencies.
+
+---
+
 ## 🌟 Core Features
 
 - 🤖 **Optimized for AI Agents**: All binary tools are smartly symlinked to `/usr/local/bin/` or global system paths, ensuring they work out-of-the-box in any Shell environment.
