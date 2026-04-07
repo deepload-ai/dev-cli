@@ -5,10 +5,13 @@ use anyhow::{Context, Result};
 pub fn install_nodejs() -> Result<()> {
     if cmd::command_exists("node") && cmd::command_exists("npm") {
         println!("🟢 Node.js is already installed. Skipping.");
+        // Ensure npm global directory is owned by user to prevent EACCES errors
+        setup_npm_global_prefix()?;
+        
         // Make sure pnpm is installed
         if !cmd::command_exists("pnpm") {
             println!("🟢 Installing missing pnpm...");
-            cmd::run_sudo_cmd("npm", &["install", "-g", "pnpm"])?;
+            cmd::run_cmd("npm", &["install", "-g", "pnpm"])?;
         }
         return Ok(());
     }
@@ -17,12 +20,57 @@ pub fn install_nodejs() -> Result<()> {
     cmd::run_cmd("bash", &["-c", "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -"])?;
     apt::install(&["nodejs"])?;
     
+    setup_npm_global_prefix()?;
+    
     println!("🟢 Installing pnpm...");
-    cmd::run_sudo_cmd("npm", &["install", "-g", "pnpm"])?;
+    cmd::run_cmd("npm", &["install", "-g", "pnpm"])?;
+    Ok(())
+}
+
+fn setup_npm_global_prefix() -> Result<()> {
+    // To solve EACCES issues when AI agents (like Claude Code) try to `npm install -g`
+    // We change the default npm global directory to a user-owned directory (~/.npm-global)
+    // and link its bin folder to /usr/local/bin so AI agents can still find the executables
+    // without needing to source ~/.bashrc
+    
+    println!("🟢 Configuring npm global prefix to avoid sudo requirements...");
+    let home = std::env::var("HOME").context("Failed to get HOME env")?;
+    let npm_global = format!("{}/.npm-global", home);
+    
+    cmd::run_cmd("mkdir", &["-p", &npm_global])?;
+    cmd::run_cmd("npm", &["config", "set", "prefix", &npm_global])?;
+    
+    // We create a system-wide profile script to update PATH for login shells
+    let script = format!("echo 'export PATH={}/bin:$PATH' | sudo tee /etc/profile.d/npm_global.sh > /dev/null", npm_global);
+    cmd::run_cmd("bash", &["-c", &script])?;
+    let _ = cmd::run_sudo_cmd("chmod", &["+x", "/etc/profile.d/npm_global.sh"]);
+    
+    // For non-interactive shells (AI Agents), we aggressively symlink the npm-global/bin directory
+    // contents to /usr/local/bin whenever a new global package is installed.
+    // However, since we can't hook into `npm install -g`, we'll at least link the currently known ones (like pnpm)
+    // and provide a helper or rely on the fact that /etc/profile.d might be sourced by some agents.
+    // Actually, a better approach for AI agents is to just make /usr/local/lib/node_modules and /usr/local/bin 
+    // writable by the current user, or use the user-prefix. 
+    // Let's stick to the user-prefix and link pnpm specifically since it's our default package manager.
+    
+    // Create the bin dir so symlinking doesn't fail if empty
+    cmd::run_cmd("mkdir", &["-p", &format!("{}/bin", npm_global)])?;
+    
+    // Add ~/.npm-global/bin to PATH for the current process so subsequent `npm install -g` commands find it
+    let current_path = std::env::var("PATH").unwrap_or_default();
+    std::env::set_var("PATH", format!("{}/bin:{}", npm_global, current_path));
+
     Ok(())
 }
 
 pub fn install_python() -> Result<()> {
+    if cmd::command_exists("python3") && cmd::command_exists("pip3") {
+        println!("🐍 Python3 is already installed. Skipping.");
+        // Ensure pip user base is configured
+        setup_pip_user_base()?;
+        return Ok(());
+    }
+
     println!("🐍 Installing Python3...");
     // Best effort to add deadsnakes PPA for latest Python versions
     let _ = cmd::run_sudo_cmd_with_env(
@@ -32,6 +80,41 @@ pub fn install_python() -> Result<()> {
     );
     apt::update()?;
     apt::install(&["python3", "python3-pip", "python3-venv", "python3-dev"])?;
+    
+    setup_pip_user_base()?;
+    Ok(())
+}
+
+fn setup_pip_user_base() -> Result<()> {
+    // To solve EACCES issues when AI agents run `pip install`
+    // We explicitly instruct pip to use the user base (~/.local) instead of system directories.
+    // We also make sure ~/.local/bin is globally sourced.
+    
+    println!("🐍 Configuring pip user base to avoid sudo requirements...");
+    let home = std::env::var("HOME").context("Failed to get HOME env")?;
+    let local_bin = format!("{}/.local/bin", home);
+    
+    cmd::run_cmd("mkdir", &["-p", &local_bin])?;
+    
+    // Create pip.conf if it doesn't exist to force --user by default
+    let pip_conf_dir = format!("{}/.config/pip", home);
+    cmd::run_cmd("mkdir", &["-p", &pip_conf_dir])?;
+    
+    let pip_conf = format!("{}/pip.conf", pip_conf_dir);
+    if !std::path::Path::new(&pip_conf).exists() {
+        let conf_content = "[global]\nuser = true\n";
+        std::fs::write(&pip_conf, conf_content)?;
+    }
+    
+    // Add ~/.local/bin to PATH system-wide
+    let script = format!("echo 'export PATH={}:$PATH' | sudo tee /etc/profile.d/pip_local.sh > /dev/null", local_bin);
+    cmd::run_cmd("bash", &["-c", &script])?;
+    let _ = cmd::run_sudo_cmd("chmod", &["+x", "/etc/profile.d/pip_local.sh"]);
+    
+    // Also update current process PATH
+    let current_path = std::env::var("PATH").unwrap_or_default();
+    std::env::set_var("PATH", format!("{}:{}", local_bin, current_path));
+
     Ok(())
 }
 

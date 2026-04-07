@@ -81,7 +81,7 @@ devenv-cli install
 | :--- | :--- | :--- |
 | **基础与网络** | `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` | 确保网络探测与文件解压畅通无阻 |
 | **编译与底层** | `build-essential` (gcc/make), `cmake`, `ninja-build`, `sqlite3` | 原生扩展编译与本地数据存储的基础 |
-| **现代编程语言** | `Node.js` (LTS) + `pnpm`<br>`Python3` + `pip` + `venv`<br>`Rust` (`cargo`, `rustup`)<br>`Go` (golang)<br>`Bun` | 放弃 nvm/pyenv，采用**全局安装**或**软链接映射**，彻底解决 AI 找不到语言环境的问题 |
+| **现代编程语言** | `Node.js` (LTS) + `pnpm`<br>`Python3` + `pip` + `venv`<br>`Rust` (`cargo`, `rustup`)<br>`Go` (golang)<br>`Bun` | 放弃 nvm/pyenv，采用**全局安装**或**软链接映射**。<br>针对 `EACCES` 报错：<br>1. 自动配置 `npm` 全局目录至 `~/.npm-global`<br>2. 自动配置 `pip` 默认使用 `--user` 用户空间隔离<br>彻底解决 AI 找不到语言环境或安装包时报错权限不足的问题 |
 | **移动与跨平台** | `Java` (OpenJDK 17 LTS)<br>`Android SDK` (cmdline-tools)<br>`Flutter SDK` | 自动同意 Google Licenses，全局配置 `JAVA_HOME` 和 `ANDROID_HOME`，`adb` 和 `flutter` 映射至全局 |
 | **部署与容器** | `Docker`, `Docker Compose` | 自动将当前用户加入 `docker` 用户组，实现**免 sudo 运行**容器 |
 | **AI 专属分析库** | `bat` (高亮 cat)<br>`fd` (极速查找)<br>`ripgrep` (极速正则搜索)<br>`jq` (JSON 解析)<br>`tree`, `btop`, `gh`, `sentry-cli` | 让 AI 代理具备远超系统自带工具的代码扫描与结构理解能力 |
