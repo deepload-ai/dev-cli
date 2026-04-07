@@ -6,6 +6,14 @@ fn is_dry_run() -> bool {
     env::var("DEVENV_DRY_RUN").unwrap_or_default() == "1"
 }
 
+pub fn command_exists(cmd: &str) -> bool {
+    Command::new("which")
+        .arg(cmd)
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false)
+}
+
 pub fn run_cmd(cmd: &str, args: &[&str]) -> Result<()> {
     if is_dry_run() {
         println!("  [DRY RUN] > {} {}", cmd, args.join(" "));

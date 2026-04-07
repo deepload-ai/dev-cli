@@ -1,13 +1,9 @@
 mod cli;
-mod core;
-mod installers;
-mod systemd;
-mod tui;
-mod uninstaller;
 
 use anyhow::Result;
 use clap::Parser;
 use cli::{Cli, Commands};
+use devenv_cli::*;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -44,6 +40,9 @@ async fn main() -> Result<()> {
                     tui::Component::Python => installers::lang::install_python()?,
                     tui::Component::Rust => installers::lang::install_rust()?,
                     tui::Component::Go => installers::lang::install_go()?,
+                    tui::Component::Java => installers::lang::install_java()?,
+                    tui::Component::AndroidSdk => installers::lang::install_android_sdk()?,
+                    tui::Component::Flutter => installers::lang::install_flutter()?,
                     tui::Component::Bun => installers::lang::install_bun()?,
                     tui::Component::Docker => installers::docker::install_docker()?,
                     tui::Component::Gh => installers::cli_tools::install_gh()?,

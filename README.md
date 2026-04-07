@@ -67,14 +67,15 @@ devenv-cli uninstall
 ```bash
 # 1. 确保安装了 Rust 环境
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
 
 # 2. 克隆代码并编译
-git clone https://github.com/your-repo/dev-cli-1.git
-cd dev-cli-1
+git clone https://github.com/deepload-ai/dev-cli.git
+cd dev-cli
 cargo build --release
 
 # 3. 运行
-./target/release/devenv-cli
+./target/release/devenv-cli install
 ```
 
 ## 🧪 调试模式
