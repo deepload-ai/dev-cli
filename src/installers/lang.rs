@@ -83,7 +83,22 @@ pub fn install_python() -> Result<InstallStatus> {
         &[("DEBIAN_FRONTEND", "noninteractive")]
     );
     apt::update()?;
-    apt::install(&["python3", "python3-pip", "python3-venv", "python3-dev"])?;
+    
+    // Install base python packages
+    apt::install(&["python3", "python3-pip", "python3-dev", "python3-venv"])?;
+    
+    // Attempt to sniff exact Python version installed and install its specific venv package
+    // to avoid issues where python3-venv meta-package fails to link to python3.x-venv correctly.
+    if let Ok(output) = std::process::Command::new("python3").arg("-c").arg("import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')").output() {
+        if output.status.success() {
+            let py_ver = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            if !py_ver.is_empty() {
+                let venv_pkg = format!("python{}-venv", py_ver);
+                println!("⏳ Explicitly installing {}...", venv_pkg);
+                let _ = apt::install(&[&venv_pkg]);
+            }
+        }
+    }
     
     setup_pip_user_base()?;
     
