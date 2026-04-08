@@ -1,30 +1,34 @@
 use crate::core::cmd;
 use super::apt;
 use anyhow::{Context, Result};
+use crate::core::models::InstallStatus;
+use crate::core::version;
 
-pub fn install_nodejs() -> Result<()> {
+pub fn install_nodejs() -> Result<InstallStatus> {
     if cmd::command_exists("node") && cmd::command_exists("npm") {
-        println!("🟢 Node.js is already installed. Skipping.");
+        println!("⏳ Checking Node.js installation...");
         // Ensure npm global directory is owned by user to prevent EACCES errors
         setup_npm_global_prefix()?;
         
         // Make sure pnpm is installed
         if !cmd::command_exists("pnpm") {
-            println!("🟢 Installing missing pnpm...");
             cmd::run_cmd("npm", &["install", "-g", "pnpm"])?;
         }
-        return Ok(());
+        let ver = version::get_node_version();
+        println!("{} Node.js is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
     
-    println!("🟢 Installing Node.js via NodeSource (LTS)...");
+    println!("⏳ Installing Node.js via NodeSource (LTS)...");
     cmd::run_cmd("bash", &["-c", "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -"])?;
     apt::install(&["nodejs"])?;
     
     setup_npm_global_prefix()?;
     
-    println!("🟢 Installing pnpm...");
     cmd::run_cmd("npm", &["install", "-g", "pnpm"])?;
-    Ok(())
+    let ver = version::get_node_version();
+    println!("{} Node.js installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
 fn setup_npm_global_prefix() -> Result<()> {
@@ -63,16 +67,16 @@ fn setup_npm_global_prefix() -> Result<()> {
     Ok(())
 }
 
-pub fn install_python() -> Result<()> {
+pub fn install_python() -> Result<InstallStatus> {
     if cmd::command_exists("python3") && cmd::command_exists("pip3") {
-        println!("🐍 Python3 is already installed. Skipping.");
-        // Ensure pip user base is configured
+        println!("⏳ Checking Python installation...");
         setup_pip_user_base()?;
-        return Ok(());
+        let ver = version::get_python_version();
+        println!("{} Python3 is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("🐍 Installing Python3...");
-    // Best effort to add deadsnakes PPA for latest Python versions
+    println!("⏳ Installing Python3...");
     let _ = cmd::run_sudo_cmd_with_env(
         "add-apt-repository", 
         &["ppa:deadsnakes/ppa", "-y"], 
@@ -82,7 +86,10 @@ pub fn install_python() -> Result<()> {
     apt::install(&["python3", "python3-pip", "python3-venv", "python3-dev"])?;
     
     setup_pip_user_base()?;
-    Ok(())
+    
+    let ver = version::get_python_version();
+    println!("{} Python3 installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
 fn setup_pip_user_base() -> Result<()> {
@@ -118,17 +125,18 @@ fn setup_pip_user_base() -> Result<()> {
     Ok(())
 }
 
-pub fn install_rust() -> Result<()> {
+pub fn install_rust() -> Result<InstallStatus> {
     if cmd::command_exists("cargo") && cmd::command_exists("rustc") {
-        println!("🦀 Rust is already installed. Skipping.");
-        return Ok(());
+        let ver = version::get_rust_version();
+        println!("{} Rust is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("🦀 Installing Rust (rustup, cargo)...");
+    println!("⏳ Installing Rust (rustup, cargo)...");
     cmd::run_cmd("bash", &["-c", "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path"])?;
     
     // Link to /usr/local/bin to make it available for AI tools without ~/.bashrc loading
-    println!("🦀 Linking Rust binaries to /usr/local/bin...");
+    println!("⏳ Linking Rust binaries to /usr/local/bin...");
     let home = std::env::var("HOME").context("Failed to get HOME env")?;
     let bin_path = format!("{}/.cargo/bin", home);
     
@@ -140,16 +148,19 @@ pub fn install_rust() -> Result<()> {
         let _ = cmd::run_sudo_cmd("ln", &["-sf", &src, &dst]);
     }
     
-    Ok(())
+    let ver = version::get_rust_version();
+    println!("{} Rust installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
-pub fn install_bun() -> Result<()> {
+pub fn install_bun() -> Result<InstallStatus> {
     if cmd::command_exists("bun") {
-        println!("🥟 Bun is already installed. Skipping.");
-        return Ok(());
+        let ver = version::get_bun_version();
+        println!("{} Bun is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("🥟 Installing Bun...");
+    println!("⏳ Installing Bun...");
     cmd::run_cmd("bash", &["-c", "curl -fsSL https://bun.sh/install | bash"])?;
     
     let home = std::env::var("HOME").context("Failed to get HOME env")?;
@@ -157,16 +168,19 @@ pub fn install_bun() -> Result<()> {
     let dst = "/usr/local/bin/bun";
     let _ = cmd::run_sudo_cmd("ln", &["-sf", &src, dst]);
     
-    Ok(())
+    let ver = version::get_bun_version();
+    println!("{} Bun installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
-pub fn install_java() -> Result<()> {
+pub fn install_java() -> Result<InstallStatus> {
     if cmd::command_exists("java") && cmd::command_exists("javac") {
-        println!("☕ Java is already installed. Skipping.");
-        return Ok(());
+        let ver = version::get_java_version();
+        println!("{} Java is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("☕ Installing Java (OpenJDK 17 LTS)...");
+    println!("⏳ Installing Java (OpenJDK 17 LTS)...");
     apt::install(&["openjdk-17-jdk", "openjdk-17-jre"])?;
     
     // AI tools often look for JAVA_HOME. On Ubuntu, it's typically /usr/lib/jvm/java-17-openjdk-amd64 (or arm64)
@@ -179,16 +193,19 @@ pub fn install_java() -> Result<()> {
     cmd::run_cmd("bash", &["-c", &script])?;
     let _ = cmd::run_sudo_cmd("chmod", &["+x", "/etc/profile.d/jdk_home.sh"]);
     
-    Ok(())
+    let ver = version::get_java_version();
+    println!("{} Java installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
-pub fn install_android_sdk() -> Result<()> {
+pub fn install_android_sdk() -> Result<InstallStatus> {
     if cmd::command_exists("adb") && cmd::command_exists("sdkmanager") {
-        println!("📱 Android SDK is already installed. Skipping.");
-        return Ok(());
+        let ver = version::get_generic_version("adb");
+        println!("{} Android SDK is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("📱 Installing Android SDK (Command line tools)...");
+    println!("⏳ Installing Android SDK (Command line tools)...");
     // Ensure Java is installed first
     install_java().ok();
     
@@ -220,7 +237,7 @@ pub fn install_android_sdk() -> Result<()> {
     let _ = cmd::run_sudo_cmd("chmod", &["+x", "/etc/profile.d/android_home.sh"]);
     
     // Accept licenses
-    println!("📱 Accepting Android SDK licenses...");
+    println!("⏳ Accepting Android SDK licenses...");
     let sdkmanager = format!("{}/bin/sdkmanager", latest_dir);
     cmd::run_cmd("bash", &["-c", &format!("yes | {} --licenses", sdkmanager)])?;
     
@@ -230,16 +247,19 @@ pub fn install_android_sdk() -> Result<()> {
     // Expose adb to AI
     let _ = cmd::run_sudo_cmd("ln", &["-sf", &format!("{}/platform-tools/adb", android_home), "/usr/local/bin/adb"]);
 
-    Ok(())
+    let ver = version::get_generic_version("adb");
+    println!("{} Android SDK installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
-pub fn install_flutter() -> Result<()> {
+pub fn install_flutter() -> Result<InstallStatus> {
     if cmd::command_exists("flutter") && cmd::command_exists("dart") {
-        println!("🦋 Flutter SDK is already installed. Skipping.");
-        return Ok(());
+        let ver = version::get_generic_version("flutter");
+        println!("{} Flutter SDK is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("🦋 Installing Flutter SDK...");
+    println!("⏳ Installing Flutter SDK...");
     
     let home = std::env::var("HOME").context("Failed to get HOME env")?;
     let flutter_dir = format!("{}/development/flutter", home);
@@ -257,19 +277,22 @@ pub fn install_flutter() -> Result<()> {
     let _ = cmd::run_sudo_cmd("ln", &["-sf", &dart_bin, "/usr/local/bin/dart"]);
     
     // Pre-cache binaries
-    println!("🦋 Precaching Flutter binaries (this may take a while)...");
+    println!("⏳ Precaching Flutter binaries (this may take a while)...");
     let _ = cmd::run_cmd("flutter", &["precache"]);
     
-    Ok(())
+    let ver = version::get_generic_version("flutter");
+    println!("{} Flutter SDK installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }
 
-pub fn install_go() -> Result<()> {
+pub fn install_go() -> Result<InstallStatus> {
     if cmd::command_exists("go") {
-        println!("🐹 Go is already installed. Skipping.");
-        return Ok(());
+        let ver = version::get_go_version();
+        println!("{} Go is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
     }
 
-    println!("🐹 Installing Go (golang)...");
+    println!("⏳ Installing Go (golang)...");
     let _ = cmd::run_sudo_cmd_with_env(
         "add-apt-repository", 
         &["ppa:longsleep/golang-backports", "-y"], 
@@ -277,5 +300,8 @@ pub fn install_go() -> Result<()> {
     );
     apt::update()?;
     apt::install(&["golang-go"])?;
-    Ok(())
+    
+    let ver = version::get_go_version();
+    println!("{} Go installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
 }

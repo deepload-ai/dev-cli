@@ -2,9 +2,9 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(name = "devenv-cli")]
-#[command(author = "Trae Dev")]
-#[command(version = "0.1.0")]
-#[command(about = "Ubuntu Development Environment Automated Setup", long_about = None)]
+#[command(about = "DevEnv CLI - Automated environment setup for Ubuntu, optimized for AI coding agents", long_about = None)]
+#[command(author = "Trae Dev <dev@example.com>")]
+#[command(version)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -12,14 +12,15 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Install development tools and environments
+    #[command(about = "Install development tools and environments")]
     Install {
-        /// Automatically install all default tools without prompting
-        #[arg(short, long)]
+        #[arg(long, help = "Automatically install all default components")]
         auto: bool,
     },
-    /// Update all installed tools to their latest versions
+    #[command(about = "Update all installed components to their latest versions")]
     Update,
-    /// Uninstall tools and optionally clean up data
+    #[command(about = "Uninstall components and clean up the environment")]
     Uninstall,
+    #[command(about = "List all supported components and their current installation status")]
+    List,
 }
