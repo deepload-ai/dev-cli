@@ -34,6 +34,7 @@ async fn main() -> Result<()> {
 
             for comp in selections {
                 let name = format!("{:?}", comp);
+
                 let status = match comp {
                     tui::Component::Base => installers::base::install_base(),
                     tui::Component::BuildEssential => installers::base::install_build_essential(),
@@ -55,7 +56,14 @@ async fn main() -> Result<()> {
                     tui::Component::SentryCli => installers::cli_tools::install_sentry_cli(),
                 };
                 
-                let status_val = status.unwrap_or_else(|e| crate::core::models::InstallStatus::Failed(e.to_string()));
+                let status_val = match status {
+                    Ok(s) => s,
+                    Err(e) => {
+                        let err_msg = e.to_string();
+                        println!("{} {} failed: {}", crate::core::models::InstallStatus::Failed(String::new()).icon(), name, err_msg);
+                        crate::core::models::InstallStatus::Failed(err_msg)
+                    }
+                };
                 summary.push(crate::core::models::ToolInfo { name, status: status_val });
             }
 
@@ -68,55 +76,70 @@ async fn main() -> Result<()> {
             
             let mut summary = Vec::new();
             
+            println!("⏳ Updating APT Packages...");
             let apt_res = installers::apt::update()
                 .and_then(|_| installers::apt::install(&["--only-upgrade", "nodejs", "python3", "docker-ce", "gh", "jq", "ripgrep"]));
             
             summary.push(crate::core::models::ToolInfo {
                 name: "APT Packages".to_string(),
-                status: if apt_res.is_ok() {
-                    crate::core::models::InstallStatus::Updated("latest".to_string())
+                status: if let Err(e) = &apt_res {
+                    println!("{} APT Packages update failed: {}", crate::core::models::InstallStatus::Failed(String::new()).icon(), e);
+                    crate::core::models::InstallStatus::Failed(e.to_string())
                 } else {
-                    crate::core::models::InstallStatus::Failed("APT update failed".to_string())
+                    println!("{} APT Packages updated successfully", crate::core::models::InstallStatus::Updated(String::new()).icon());
+                    crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
             
+            println!("⏳ Updating NPM Global Packages...");
             let npm_res = core::cmd::run_sudo_cmd("npm", &["update", "-g"]);
             summary.push(crate::core::models::ToolInfo {
                 name: "NPM Global".to_string(),
-                status: if npm_res.is_ok() {
-                    crate::core::models::InstallStatus::Updated("latest".to_string())
+                status: if let Err(e) = &npm_res {
+                    println!("{} NPM Global update failed: {}", crate::core::models::InstallStatus::Failed(String::new()).icon(), e);
+                    crate::core::models::InstallStatus::Failed(e.to_string())
                 } else {
-                    crate::core::models::InstallStatus::Failed("NPM update failed".to_string())
+                    println!("{} NPM Global updated successfully", crate::core::models::InstallStatus::Updated(String::new()).icon());
+                    crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
 
+            println!("⏳ Updating Rustup...");
             let rust_res = core::cmd::run_cmd("rustup", &["update"]);
             summary.push(crate::core::models::ToolInfo {
                 name: "Rustup".to_string(),
-                status: if rust_res.is_ok() {
-                    crate::core::models::InstallStatus::Updated("latest".to_string())
+                status: if let Err(e) = &rust_res {
+                    println!("{} Rustup update failed: {}", crate::core::models::InstallStatus::Failed(String::new()).icon(), e);
+                    crate::core::models::InstallStatus::Failed(e.to_string())
                 } else {
-                    crate::core::models::InstallStatus::Failed("Rustup update failed".to_string())
+                    println!("{} Rustup updated successfully", crate::core::models::InstallStatus::Updated(String::new()).icon());
+                    crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
 
+            println!("⏳ Updating Bun...");
             let bun_res = core::cmd::run_cmd("bun", &["upgrade"]);
             summary.push(crate::core::models::ToolInfo {
                 name: "Bun".to_string(),
-                status: if bun_res.is_ok() {
-                    crate::core::models::InstallStatus::Updated("latest".to_string())
+                status: if let Err(e) = &bun_res {
+                    println!("{} Bun update failed: {}", crate::core::models::InstallStatus::Failed(String::new()).icon(), e);
+                    crate::core::models::InstallStatus::Failed(e.to_string())
                 } else {
-                    crate::core::models::InstallStatus::Failed("Bun upgrade failed".to_string())
+                    println!("{} Bun updated successfully", crate::core::models::InstallStatus::Updated(String::new()).icon());
+                    crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
 
+            println!("⏳ Updating Sentry CLI...");
             let sentry_res = core::cmd::run_sudo_cmd("sentry-cli", &["update"]);
             summary.push(crate::core::models::ToolInfo {
                 name: "Sentry CLI".to_string(),
-                status: if sentry_res.is_ok() {
-                    crate::core::models::InstallStatus::Updated("latest".to_string())
+                status: if let Err(e) = &sentry_res {
+                    println!("{} Sentry CLI update failed: {}", crate::core::models::InstallStatus::Failed(String::new()).icon(), e);
+                    crate::core::models::InstallStatus::Failed(e.to_string())
                 } else {
-                    crate::core::models::InstallStatus::Failed("Sentry CLI update failed".to_string())
+                    println!("{} Sentry CLI updated successfully", crate::core::models::InstallStatus::Updated(String::new()).icon());
+                    crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
             

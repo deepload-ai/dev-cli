@@ -15,80 +15,67 @@ pub fn command_exists(cmd: &str) -> bool {
 }
 
 pub fn run_cmd(cmd: &str, args: &[&str]) -> Result<()> {
-    if is_dry_run() {
-        println!("  [DRY RUN] > {} {}", cmd, args.join(" "));
-        return Ok(());
-    }
-    
-    println!("  > {} {}", cmd, args.join(" "));
-    let status = Command::new(cmd)
-        .args(args)
-        .status()
-        .with_context(|| format!("Failed to execute {}", cmd))?;
-
-    if !status.success() {
-        anyhow::bail!("Command failed with status: {}", status);
-    }
-    Ok(())
+    run_cmd_internal(cmd, args, false, &[])
 }
 
 pub fn run_sudo_cmd(cmd: &str, args: &[&str]) -> Result<()> {
-    if is_dry_run() {
-        println!("  [DRY RUN] > sudo {} {}", cmd, args.join(" "));
-        return Ok(());
-    }
-    
-    let mut sudo_args = vec![cmd];
-    sudo_args.extend_from_slice(args);
-    run_cmd("sudo", &sudo_args)
+    run_cmd_internal(cmd, args, true, &[])
 }
 
 pub fn run_cmd_with_env(cmd: &str, args: &[&str], envs: &[(&str, &str)]) -> Result<()> {
-    if is_dry_run() {
-        let env_str = envs.iter().map(|(k, v)| format!("{}={}", k, v)).collect::<Vec<_>>().join(" ");
-        println!("  [DRY RUN] > {} {} {}", env_str, cmd, args.join(" "));
-        return Ok(());
-    }
-
-    println!("  > {} {}", cmd, args.join(" "));
-    let mut command = Command::new(cmd);
-    command.args(args);
-    for (k, v) in envs {
-        command.env(k, v);
-    }
-    
-    let status = command
-        .status()
-        .with_context(|| format!("Failed to execute {}", cmd))?;
-
-    if !status.success() {
-        anyhow::bail!("Command failed with status: {}", status);
-    }
-    Ok(())
+    run_cmd_internal(cmd, args, false, envs)
 }
 
 pub fn run_sudo_cmd_with_env(cmd: &str, args: &[&str], envs: &[(&str, &str)]) -> Result<()> {
+    run_cmd_internal(cmd, args, true, envs)
+}
+
+fn run_cmd_internal(cmd: &str, args: &[&str], sudo: bool, envs: &[(&str, &str)]) -> Result<()> {
     if is_dry_run() {
         let env_str = envs.iter().map(|(k, v)| format!("{}={}", k, v)).collect::<Vec<_>>().join(" ");
-        println!("  [DRY RUN] > sudo -E {} {} {}", env_str, cmd, args.join(" "));
+        println!("  [DRY RUN] > {}{} {} {}", if sudo { "sudo " } else { "" }, env_str, cmd, args.join(" "));
         return Ok(());
     }
 
-    let mut command = Command::new("sudo");
-    command.arg("-E");
-    command.arg(cmd);
+    let mut command = if sudo {
+        let mut c = Command::new("sudo");
+        c.arg("-E").arg(cmd);
+        c
+    } else {
+        Command::new(cmd)
+    };
+
     command.args(args);
     for (k, v) in envs {
         command.env(k, v);
     }
 
-    println!("  > sudo -E {} {}", cmd, args.join(" "));
-    let status = command
-        .status()
-        .with_context(|| format!("Failed to execute sudo {}", cmd))?;
+    // Use output() to capture stdout and stderr without deadlocking
+    let output = command.output()
+        .with_context(|| format!("Failed to execute {}", cmd))?;
 
-    if !status.success() {
-        anyhow::bail!("Command failed with status: {}", status);
+    if !output.status.success() {
+        // Combine stdout and stderr for the error context
+        let mut all_output = String::from_utf8_lossy(&output.stdout).to_string();
+        all_output.push_str("\n");
+        all_output.push_str(&String::from_utf8_lossy(&output.stderr));
+        
+        let lines: Vec<&str> = all_output.lines().collect();
+        
+        // Take the last 50 lines
+        let last_lines = if lines.len() > 50 {
+            lines[lines.len() - 50..].join("\n")
+        } else {
+            lines.join("\n")
+        };
+        
+        let error_context = if last_lines.trim().is_empty() {
+            "No output captured".to_string()
+        } else {
+            format!("Last output:\n---\n{}\n---", last_lines)
+        };
+        anyhow::bail!("Command failed with status: {}\n{}", output.status, error_context);
     }
+
     Ok(())
 }
