@@ -32,6 +32,11 @@ pub enum Component {
     
     // 6. Application level tools
     SentryCli,
+    
+    // 7. AI Coding Agents
+    ClaudeCode,
+    Codex,
+    OpenCode,
 }
 
 impl Component {
@@ -55,6 +60,9 @@ impl Component {
             Component::Ripgrep => "ripgrep (rg)",
             Component::AITools => "AI Analysis Tools (bat, fd, tree, btop)",
             Component::SentryCli => "sentry-cli",
+            Component::ClaudeCode => "Claude Code (with gstack, ecc, ui-ux skills)",
+            Component::Codex => "Codex (with skills)",
+            Component::OpenCode => "OpenCode (with oh-my-opencode, superpowers)",
         }
     }
 
@@ -89,6 +97,11 @@ impl Component {
             
             // 6. Application level tools
             Component::SentryCli,
+            
+            // 7. AI Coding Agents
+            Component::ClaudeCode,
+            Component::Codex,
+            Component::OpenCode,
         ]
     }
 }

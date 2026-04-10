@@ -54,6 +54,9 @@ async fn main() -> Result<()> {
                     tui::Component::Ripgrep => installers::cli_tools::install_ripgrep(),
                     tui::Component::AITools => installers::cli_tools::install_ai_tools(),
                     tui::Component::SentryCli => installers::cli_tools::install_sentry_cli(),
+                    tui::Component::ClaudeCode => installers::ai_agents::install_claude_code(),
+                    tui::Component::Codex => installers::ai_agents::install_codex(),
+                    tui::Component::OpenCode => installers::ai_agents::install_opencode(),
                 };
                 
                 let status_val = match status {
@@ -175,6 +178,9 @@ async fn main() -> Result<()> {
                     tui::Component::Sqlite3 => ("sqlite3", || crate::core::version::get_generic_version("sqlite3")),
                     tui::Component::BuildEssential => ("gcc", || crate::core::version::get_generic_version("gcc")),
                     tui::Component::Base => ("git", || crate::core::version::get_generic_version("git")),
+                    tui::Component::ClaudeCode => ("claude", || crate::core::version::get_generic_version("claude")),
+                    tui::Component::Codex => ("codex", || crate::core::version::get_generic_version("codex")),
+                    tui::Component::OpenCode => ("opencode", || crate::core::version::get_generic_version("opencode")),
                 };
 
                 let status = if crate::core::cmd::command_exists(cmd_name) {
