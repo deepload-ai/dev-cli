@@ -32,6 +32,7 @@ pub fn install_jq() -> Result<InstallStatus> {
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing jq...");
+    apt::update()?;
     apt::install(&["jq"])?;
     
     let ver = version::get_generic_version("jq");
@@ -46,6 +47,7 @@ pub fn install_ripgrep() -> Result<InstallStatus> {
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing ripgrep (rg)...");
+    apt::update()?;
     apt::install(&["ripgrep"])?;
     
     let ver = version::get_generic_version("rg");
@@ -74,6 +76,9 @@ pub fn install_cmake_ninja() -> Result<InstallStatus> {
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing CMake & Ninja...");
+    
+    // Always update apt before installing system packages to prevent 404 errors 
+    apt::update()?;
     apt::install(&["cmake", "ninja-build"])?;
     
     let ver = version::get_generic_version("cmake");
@@ -88,6 +93,7 @@ pub fn install_sqlite3() -> Result<InstallStatus> {
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing SQLite3...");
+    apt::update()?;
     apt::install(&["sqlite3", "libsqlite3-dev"])?;
     
     let ver = version::get_generic_version("sqlite3");
@@ -104,6 +110,7 @@ pub fn install_ai_tools() -> Result<InstallStatus> {
     println!("⏳ Installing AI Analysis Tools (bat, fd, tree, btop)...");
     // btop is available in ubuntu 22.04+, fallback to htop if not found is handled by apt if we just provide both or use a ppa.
     // For simplicity we try to install both btop and htop.
+    apt::update()?;
     apt::install(&["bat", "fd-find", "tree", "btop", "htop"])?;
     
     // Create symlinks for bat and fd as they are installed as batcat and fdfind by default on Ubuntu
