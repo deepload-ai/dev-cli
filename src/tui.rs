@@ -3,23 +3,34 @@ use dialoguer::{theme::ColorfulTheme, Confirm, MultiSelect};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Component {
+    // 1. Base system & C/C++ build tools
     Base,
     BuildEssential,
     CMakeNinja,
     Sqlite3,
+    
+    // 2. Core CLI utilities
+    Jq,
+    Ripgrep,
+    AITools,
+    Gh,
+    
+    // 3. Languages and runtimes
     NodeJs,
+    Bun,
     Python,
     Rust,
     Go,
     Java,
+    
+    // 4. Heavy systems
+    Docker,
+    
+    // 5. Mobile SDKs
     AndroidSdk,
     Flutter,
-    Bun,
-    Docker,
-    Gh,
-    Jq,
-    Ripgrep,
-    AITools,
+    
+    // 6. Application level tools
     SentryCli,
 }
 
@@ -49,23 +60,34 @@ impl Component {
 
     pub fn all() -> Vec<Component> {
         vec![
+            // 1. Base system & C/C++ build tools
             Component::Base,
             Component::BuildEssential,
             Component::CMakeNinja,
             Component::Sqlite3,
+            
+            // 2. Core CLI utilities
+            Component::Jq,
+            Component::Ripgrep,
+            Component::AITools,
+            Component::Gh,
+            
+            // 3. Languages and runtimes
             Component::NodeJs,
+            Component::Bun,
             Component::Python,
             Component::Rust,
             Component::Go,
             Component::Java,
+            
+            // 4. Heavy systems
+            Component::Docker,
+            
+            // 5. Mobile SDKs
             Component::AndroidSdk,
             Component::Flutter,
-            Component::Bun,
-            Component::Docker,
-            Component::Gh,
-            Component::Jq,
-            Component::Ripgrep,
-            Component::AITools,
+            
+            // 6. Application level tools
             Component::SentryCli,
         ]
     }

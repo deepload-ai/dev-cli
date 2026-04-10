@@ -5,9 +5,12 @@ use crate::core::models::InstallStatus;
 use crate::core::version;
 
 pub fn install_base() -> Result<InstallStatus> {
-    if cmd::command_exists("curl") && cmd::command_exists("git") {
+    let required_cmds = ["curl", "git", "wget", "unzip", "zip", "tar"];
+    let all_exist = required_cmds.iter().all(|&cmd| cmd::command_exists(cmd));
+    
+    if all_exist {
         let ver = version::get_generic_version("git");
-        println!("{} Base utilities (curl, git, etc) are already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        println!("{} Base utilities (curl, git, unzip, etc) are already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing base utilities...");
@@ -22,7 +25,10 @@ pub fn install_base() -> Result<InstallStatus> {
 }
 
 pub fn install_build_essential() -> Result<InstallStatus> {
-    if cmd::command_exists("gcc") && cmd::command_exists("make") {
+    let required_cmds = ["gcc", "make", "pkg-config"];
+    let all_exist = required_cmds.iter().all(|&cmd| cmd::command_exists(cmd));
+    
+    if all_exist {
         let ver = version::get_generic_version("gcc");
         println!("{} Build essential tools are already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
         return Ok(InstallStatus::AlreadyExists(ver));
