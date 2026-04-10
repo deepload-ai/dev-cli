@@ -14,6 +14,10 @@ pub fn install_base() -> Result<InstallStatus> {
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing base utilities...");
+    
+    // Initial apt update is required for fresh Ubuntu installations
+    apt::update()?;
+    
     apt::install(&[
         "curl", "git", "wget", "gnupg", "ca-certificates", "software-properties-common",
         "unzip", "zip", "tar", "psmisc", "netcat-openbsd",
@@ -34,6 +38,10 @@ pub fn install_build_essential() -> Result<InstallStatus> {
         return Ok(InstallStatus::AlreadyExists(ver));
     }
     println!("⏳ Installing build-essential...");
+    
+    // Always update apt before installing build-essential to prevent 404 errors 
+    // caused by stale package indexes, especially for frequently updated packages like gcc/linux-libc-dev
+    apt::update()?;
     apt::install(&["build-essential", "pkg-config", "libssl-dev"])?;
     
     let ver = version::get_generic_version("gcc");
