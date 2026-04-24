@@ -13,9 +13,15 @@ pub enum Component {
     Jq,
     Ripgrep,
     AITools,
+    SysDiag,
+    DataTools,
     Gh,
     
-    // 3. Languages and runtimes
+    // 3. AI Environments & Dependencies
+    AIMedia,
+    WebAuto,
+    
+    // 4. Languages and runtimes
     NodeJs,
     Bun,
     Python,
@@ -59,6 +65,10 @@ impl Component {
             Component::Jq => "jq",
             Component::Ripgrep => "ripgrep (rg)",
             Component::AITools => "AI Analysis Tools (bat, fd, tree, btop)",
+            Component::SysDiag => "System Diagnostics (lsof, strace, dnsutils, etc)",
+            Component::DataTools => "Data & Search Tools (yq, fzf)",
+            Component::AIMedia => "AI Media & Docs (ffmpeg, imagemagick, poppler, tesseract)",
+            Component::WebAuto => "Web Automation Deps (xvfb, libnss3, Playwright/Puppeteer deps)",
             Component::SentryCli => "sentry-cli",
             Component::ClaudeCode => "Claude Code (with gstack, ecc, ui-ux skills)",
             Component::Codex => "Codex (with skills)",
@@ -78,9 +88,15 @@ impl Component {
             Component::Jq,
             Component::Ripgrep,
             Component::AITools,
+            Component::SysDiag,
+            Component::DataTools,
             Component::Gh,
             
-            // 3. Languages and runtimes
+            // 3. AI Environments & Dependencies
+            Component::AIMedia,
+            Component::WebAuto,
+            
+            // 4. Languages and runtimes
             Component::NodeJs,
             Component::Bun,
             Component::Python,

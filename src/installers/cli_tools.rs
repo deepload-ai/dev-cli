@@ -121,3 +121,45 @@ pub fn install_ai_tools() -> Result<InstallStatus> {
     println!("{} AI Analysis Tools installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
     Ok(InstallStatus::Installed(ver))
 }
+
+pub fn install_sys_diag() -> Result<InstallStatus> {
+    if cmd::command_exists("lsof") && cmd::command_exists("strace") {
+        let ver = version::get_generic_version("lsof");
+        println!("{} System Diagnostic Tools are already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
+    }
+    println!("⏳ Installing System Diagnostic Tools (lsof, strace, dnsutils, iproute2, net-tools)...");
+    
+    apt::update()?;
+    apt::install(&["lsof", "strace", "dnsutils", "iproute2", "net-tools"])?;
+    
+    let ver = version::get_generic_version("lsof");
+    println!("{} System Diagnostic Tools installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
+}
+
+pub fn install_data_tools() -> Result<InstallStatus> {
+    if cmd::command_exists("yq") && cmd::command_exists("fzf") {
+        let ver = version::get_generic_version("yq");
+        println!("{} Data & Search Tools are already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
+        return Ok(InstallStatus::AlreadyExists(ver));
+    }
+    println!("⏳ Installing Data & Search Tools (yq, fzf)...");
+    
+    apt::update()?;
+    // Install fzf via apt
+    apt::install(&["fzf"])?;
+    
+    // Install yq via github release script to ensure latest version and avoid ubuntu default name conflict
+    if !cmd::command_exists("yq") {
+        let script = r#"
+            wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+            chmod +x /usr/bin/yq
+        "#;
+        cmd::run_sudo_cmd("bash", &["-c", script])?;
+    }
+    
+    let ver = version::get_generic_version("yq");
+    println!("{} Data & Search Tools installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
+    Ok(InstallStatus::Installed(ver))
+}
