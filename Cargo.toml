@@ -1,6 +1,6 @@
 [package]
 name = "devenv-cli"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 authors = ["Trae Dev <dev@example.com>"]
 description = "A CLI tool to automatically install and configure development environments for Ubuntu, optimized for AI coding agents."
