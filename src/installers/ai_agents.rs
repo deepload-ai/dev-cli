@@ -35,20 +35,38 @@ pub fn install_claude_code() -> Result<InstallStatus> {
     println!("⏳ Installing Claude Code via npm...");
     let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "@anthropic-ai/claude-code"]);
 
-    println!("⏳ Installing Claude Code skills (ecc-universal, oh-my-claudecode)...");
-    let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "ecc-universal"]);
-    let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "oh-my-claude-sisyphus@latest"]);
-
     let home = get_home()?;
-    let claude_skills_dir = Path::new(&home).join(".claude").join("skills");
 
-    println!("⏳ Cloning gstack skills...");
-    let gstack_path = claude_skills_dir.join("gstack");
-    let _ = clone_skill_repo("https://github.com/garrytan/gstack.git", &gstack_path);
+    println!("⏳ Installing everything-claude-code...");
+    let ecc_path = Path::new(&home).join("everything-claude-code");
+    if ecc_path.exists() {
+        let _ = fs::remove_dir_all(&ecc_path);
+    }
+    let _ = cmd::run_cmd("git", &["clone", "https://github.com/affaan-m/everything-claude-code.git", ecc_path.to_str().unwrap()]);
+    let _ = cmd::run_cmd("bash", &["-c", &format!("cd {} && npm install && ./install.sh --profile full", ecc_path.to_str().unwrap())]);
 
-    println!("⏳ Cloning ui-ux-pro-max-skill...");
-    let ui_ux_path = claude_skills_dir.join("ui-ux-pro-max-skill");
-    let _ = clone_skill_repo("https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git", &ui_ux_path);
+    println!("⏳ Installing claude-mem...");
+    let _ = cmd::run_cmd("npx", &["-y", "claude-mem", "install"]);
+
+    println!("⏳ Installing openclaw...");
+    let _ = cmd::run_cmd("bash", &["-c", "curl -fsSL https://install.cmem.ai/openclaw.sh | bash"]);
+
+    println!("⏳ Installing rtk...");
+    let _ = cmd::run_cmd("bash", &["-c", "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh"]);
+
+    println!("⏳ Installing pua...");
+    let _ = cmd::run_cmd("npx", &["-y", "skills", "add", "tanweai/pua", "--skill", "pua"]);
+
+    println!("⏳ Installing gstack...");
+    let gstack_path = Path::new(&home).join("gstack");
+    if !gstack_path.exists() {
+        let _ = cmd::run_cmd("git", &["clone", "--single-branch", "--depth", "1", "https://github.com/garrytan/gstack.git", gstack_path.to_str().unwrap()]);
+    }
+    let _ = cmd::run_cmd("bash", &["-c", &format!("cd {} && ./setup", gstack_path.to_str().unwrap())]);
+
+    println!("⏳ Installing ui-ux-pro-max-skill for Claude...");
+    let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "uipro-cli"]);
+    let _ = cmd::run_cmd("uipro", &["init", "--ai", "claude"]);
 
     let ver = version::get_generic_version("claude");
     println!("{} Claude Code and skills installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
@@ -95,64 +113,35 @@ pub fn install_opencode() -> Result<InstallStatus> {
         anyhow::bail!("npm is required to install OpenCode skills. Please install Node.js first.");
     }
 
-    println!("⏳ Installing OpenCode via bash script...");
-    // curl -fsSL https://opencode.ai/install | bash
-    let curl_output = std::process::Command::new("curl")
-        .args(["-fsSL", "https://opencode.ai/install"])
-        .output()?;
-    
-    if curl_output.status.success() {
-        let script = String::from_utf8_lossy(&curl_output.stdout);
-        let mut child = std::process::Command::new("bash")
-            .stdin(std::process::Stdio::piped())
-            .spawn()?;
-        
-        if let Some(mut stdin) = child.stdin.take() {
-            use std::io::Write;
-            let _ = stdin.write_all(script.as_bytes());
-        }
-        let _ = child.wait()?;
-    }
+    if cmd::command_exists("opencode") {
+        println!("✅ OpenCode is already installed. Skipping base installation.");
+    } else {
+        println!("⏳ Installing OpenCode via bash script...");
+        // curl -fsSL https://opencode.ai/install | bash
+        let curl_output = std::process::Command::new("curl")
+            .args(["-fsSL", "https://opencode.ai/install"])
+            .output()?;
 
-    println!("⏳ Installing OpenCode skills (oh-my-opencode)...");
-    let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "oh-my-opencode@latest"]);
+        if curl_output.status.success() {
+            let script = String::from_utf8_lossy(&curl_output.stdout);
+            let mut child = std::process::Command::new("bash")
+                .stdin(std::process::Stdio::piped())
+                .spawn()?;
 
-    println!("⏳ Configuring OpenCode superpowers plugin...");
-    let home = get_home()?;
-    let opencode_config_dir = Path::new(&home).join(".config").join("opencode");
-    if !opencode_config_dir.exists() {
-        let _ = fs::create_dir_all(&opencode_config_dir);
-    }
-    
-    let opencode_json_path = opencode_config_dir.join("opencode.json");
-    let mut config_json = serde_json::json!({});
-    
-    if opencode_json_path.exists() {
-        if let Ok(content) = fs::read_to_string(&opencode_json_path) {
-            if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&content) {
-                config_json = parsed;
+            if let Some(mut stdin) = child.stdin.take() {
+                use std::io::Write;
+                let _ = stdin.write_all(script.as_bytes());
             }
+            let _ = child.wait()?;
         }
     }
 
-    // Add superpowers plugin to opencode.json
-    let plugin_str = "superpowers@git+https://github.com/obra/superpowers.git";
-    if let Some(obj) = config_json.as_object_mut() {
-        let plugins = obj.entry("plugin").or_insert_with(|| serde_json::json!([]));
-        if let Some(arr) = plugins.as_array_mut() {
-            let has_plugin = arr.iter().any(|v| v.as_str() == Some(plugin_str));
-            if !has_plugin {
-                arr.push(serde_json::json!(plugin_str));
-            }
-        } else {
-            // "plugin" exists but is not an array, overwrite it
-            *plugins = serde_json::json!([plugin_str]);
-        }
-    }
+    println!("⏳ Installing claude-mem for OpenCode...");
+    let _ = cmd::run_cmd("npx", &["-y", "claude-mem", "install", "--ide", "opencode"]);
 
-    if let Ok(new_content) = serde_json::to_string_pretty(&config_json) {
-        let _ = fs::write(&opencode_json_path, new_content);
-    }
+    println!("⏳ Installing ui-ux-pro-max-skill for OpenCode...");
+    let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "uipro-cli"]);
+    let _ = cmd::run_cmd("uipro", &["init", "--ai", "opencode"]);
 
     let ver = version::get_generic_version("opencode");
     println!("{} OpenCode and skills installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
