@@ -37,7 +37,7 @@ pub fn install_claude_code() -> Result<InstallStatus> {
 
     let home = get_home()?;
 
-    println!("⏳ Installing everything-claude-code...");
+    println!("⏳ Installing everything-claude-code (https://github.com/affaan-m/everything-claude-code)...");
     let ecc_path = Path::new(&home).join("everything-claude-code");
     if ecc_path.exists() {
         let _ = fs::remove_dir_all(&ecc_path);
@@ -45,28 +45,35 @@ pub fn install_claude_code() -> Result<InstallStatus> {
     let _ = cmd::run_cmd("git", &["clone", "https://github.com/affaan-m/everything-claude-code.git", ecc_path.to_str().unwrap()]);
     let _ = cmd::run_cmd("bash", &["-c", &format!("cd {} && npm install && ./install.sh --profile full", ecc_path.to_str().unwrap())]);
 
-    println!("⏳ Installing claude-mem...");
+    println!("⏳ Installing claude-mem (https://install.cmem.ai)...");
     let _ = cmd::run_cmd("npx", &["-y", "claude-mem", "install"]);
 
-    println!("⏳ Installing openclaw...");
+    println!("⏳ Installing openclaw (https://install.cmem.ai)...");
     let _ = cmd::run_cmd("bash", &["-c", "curl -fsSL https://install.cmem.ai/openclaw.sh | bash"]);
 
-    println!("⏳ Installing rtk...");
+    println!("⏳ Installing rtk (https://github.com/rtk-ai/rtk)...");
     let _ = cmd::run_cmd("bash", &["-c", "curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh"]);
 
-    println!("⏳ Installing pua...");
+    println!("⏳ Installing pua (https://github.com/tanweai/pua)...");
     let _ = cmd::run_cmd("npx", &["-y", "skills", "add", "tanweai/pua", "--skill", "pua"]);
 
-    println!("⏳ Installing gstack...");
+    println!("⏳ Installing gstack (https://github.com/garrytan/gstack)...");
     let gstack_path = Path::new(&home).join("gstack");
     if !gstack_path.exists() {
         let _ = cmd::run_cmd("git", &["clone", "--single-branch", "--depth", "1", "https://github.com/garrytan/gstack.git", gstack_path.to_str().unwrap()]);
     }
     let _ = cmd::run_cmd("bash", &["-c", &format!("cd {} && ./setup", gstack_path.to_str().unwrap())]);
 
-    println!("⏳ Installing ui-ux-pro-max-skill for Claude...");
+    println!("⏳ Installing ui-ux-pro-max-skill for Claude (https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)...");
     let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "uipro-cli"]);
     let _ = cmd::run_cmd("uipro", &["init", "--ai", "claude"]);
+
+    println!("⏳ Installing oh-my-claudecode (https://github.com/Yeachan-Heo/oh-my-claudecode)...");
+    let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "oh-my-claude-sisyphus@latest"]);
+    let _ = cmd::run_cmd("omc", &["setup"]);
+
+    println!("⏳ Installing graphify (https://github.com/safishamsi/graphify)...");
+    let _ = cmd::run_cmd("bash", &["-c", "export PATH=$PATH:~/.local/bin && (pipx install graphifyy || pip install --user graphifyy) && graphify install"]);
 
     let ver = version::get_generic_version("claude");
     println!("{} Claude Code and skills installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
@@ -86,17 +93,20 @@ pub fn install_codex() -> Result<InstallStatus> {
 
     println!("⏳ Installing Codex skills...");
     // Since Codex is an agent, we install the same recommended universal skills
+    println!("⏳ Installing ecc-universal (https://github.com/affaan-m/everything-claude-code)...");
     let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "ecc-universal"]);
+
+    println!("⏳ Installing oh-my-claudecode (https://github.com/Yeachan-Heo/oh-my-claudecode)...");
     let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "oh-my-claude-sisyphus@latest"]);
 
     let home = get_home()?;
     let codex_skills_dir = Path::new(&home).join(".codex").join("skills");
 
-    println!("⏳ Cloning gstack skills for Codex...");
+    println!("⏳ Cloning gstack skills for Codex (https://github.com/garrytan/gstack)...");
     let gstack_path = codex_skills_dir.join("gstack");
     let _ = clone_skill_repo("https://github.com/garrytan/gstack.git", &gstack_path);
 
-    println!("⏳ Cloning ui-ux-pro-max-skill for Codex...");
+    println!("⏳ Cloning ui-ux-pro-max-skill for Codex (https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)...");
     let ui_ux_path = codex_skills_dir.join("ui-ux-pro-max-skill");
     let _ = clone_skill_repo("https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git", &ui_ux_path);
 
@@ -136,12 +146,18 @@ pub fn install_opencode() -> Result<InstallStatus> {
         }
     }
 
-    println!("⏳ Installing claude-mem for OpenCode...");
+    println!("⏳ Installing claude-mem for OpenCode (https://cmem.ai)...");
     let _ = cmd::run_cmd("npx", &["-y", "claude-mem", "install", "--ide", "opencode"]);
 
-    println!("⏳ Installing ui-ux-pro-max-skill for OpenCode...");
+    println!("⏳ Installing ui-ux-pro-max-skill for OpenCode (https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)...");
     let _ = cmd::run_sudo_cmd("npm", &["install", "-g", "uipro-cli"]);
     let _ = cmd::run_cmd("uipro", &["init", "--ai", "opencode"]);
+
+    println!("⏳ Installing graphify for OpenCode (https://github.com/safishamsi/graphify)...");
+    let _ = cmd::run_cmd("bash", &["-c", "export PATH=$PATH:~/.local/bin && (pipx install graphifyy || pip install --user graphifyy) && graphify install --platform opencode"]);
+
+    println!("⏳ Installing graphify for Trae (https://github.com/safishamsi/graphify)...");
+    let _ = cmd::run_cmd("bash", &["-c", "export PATH=$PATH:~/.local/bin && graphify install --platform trae"]);
 
     let ver = version::get_generic_version("opencode");
     println!("{} OpenCode and skills installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
