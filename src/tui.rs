@@ -8,7 +8,7 @@ pub enum Component {
     BuildEssential,
     CMakeNinja,
     Sqlite3,
-    
+
     // 2. Core CLI utilities
     Jq,
     Ripgrep,
@@ -16,11 +16,11 @@ pub enum Component {
     SysDiag,
     DataTools,
     Gh,
-    
+
     // 3. AI Environments & Dependencies
     AIMedia,
     WebAuto,
-    
+
     // 4. Languages and runtimes
     NodeJs,
     Bun,
@@ -28,21 +28,24 @@ pub enum Component {
     Rust,
     Go,
     Java,
-    
+
     // 4. Heavy systems
     Docker,
-    
+
     // 5. Mobile SDKs
     AndroidSdk,
     Flutter,
-    
+
     // 6. Application level tools
     SentryCli,
-    
+
     // 7. AI Coding Agents
     ClaudeCode,
     Codex,
     OpenCode,
+
+    // 8. AI Agent Skills
+    AISkills,
 }
 
 impl Component {
@@ -70,9 +73,10 @@ impl Component {
             Component::AIMedia => "AI Media & Docs (ffmpeg, imagemagick, poppler, tesseract)",
             Component::WebAuto => "Web Automation Deps (xvfb, libnss3, Playwright/Puppeteer deps)",
             Component::SentryCli => "sentry-cli",
-            Component::ClaudeCode => "Claude Code (with gstack, ecc, ui-ux skills)",
-            Component::Codex => "Codex (with skills)",
-            Component::OpenCode => "OpenCode (with oh-my-opencode, superpowers)",
+            Component::ClaudeCode => "Claude Code",
+            Component::Codex => "Codex",
+            Component::OpenCode => "OpenCode",
+            Component::AISkills => "AI Agent Skills (ecc, claude-mem, rtk, gstack, graphify, etc)",
         }
     }
 
@@ -83,7 +87,7 @@ impl Component {
             Component::BuildEssential,
             Component::CMakeNinja,
             Component::Sqlite3,
-            
+
             // 2. Core CLI utilities
             Component::Jq,
             Component::Ripgrep,
@@ -91,11 +95,11 @@ impl Component {
             Component::SysDiag,
             Component::DataTools,
             Component::Gh,
-            
+
             // 3. AI Environments & Dependencies
             Component::AIMedia,
             Component::WebAuto,
-            
+
             // 4. Languages and runtimes
             Component::NodeJs,
             Component::Bun,
@@ -103,21 +107,24 @@ impl Component {
             Component::Rust,
             Component::Go,
             Component::Java,
-            
+
             // 4. Heavy systems
             Component::Docker,
-            
+
             // 5. Mobile SDKs
             Component::AndroidSdk,
             Component::Flutter,
-            
+
             // 6. Application level tools
             Component::SentryCli,
-            
+
             // 7. AI Coding Agents
             Component::ClaudeCode,
             Component::Codex,
             Component::OpenCode,
+
+            // 8. AI Agent Skills
+            Component::AISkills,
         ]
     }
 }

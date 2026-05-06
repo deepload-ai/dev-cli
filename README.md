@@ -89,67 +89,18 @@ devenv-cli install
 
 无论你是做前端、后端、还是移动端跨平台开发，这里应有尽有。工具会严格按照以下归类和顺序依次进行安装：
 
-### 1. 基础系统与编译构建 (Base system & C/C++ build tools)
-- **Base & Net**: `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` (确保网络探测与文件解压畅通无阻)
-- **Build Essential**: `gcc`, `make`
-- **CMake & Ninja**: `cmake`, `ninja-build`
-- **SQLite3**: `sqlite3`
-
-### 2. 核心 CLI 工具 (Core CLI utilities)
-- **jq**: 轻量级命令行 JSON 处理器
-- **ripgrep (rg)**: 极速正则搜索工具
-- **AI Analysis Tools**: `bat` (带高亮的 cat), `fd` (极速查找), `tree`, `btop`
-- **System Diagnostics**: `lsof`, `strace`, `dnsutils`, 等系统诊断工具
-- **Data & Search Tools**: `yq` (YAML处理), `fzf` (模糊查找)
-- **GitHub CLI**: `gh`
-
-### 3. AI 环境与依赖 (AI Environments & Dependencies)
-- **AI Media & Docs**: `ffmpeg`, `imagemagick`, `poppler-utils`, `tesseract-ocr` (AI 处理多媒体与文档的依赖)
-- **Web Automation Deps**: `xvfb`, `libnss3` 等 Playwright/Puppeteer 自动化浏览器测试底层依赖
-
-### 4. 编程语言与运行时 (Languages and runtimes)
-放弃 nvm/pyenv，针对 AI 代理优化了**全局安装**或**软链接映射**，彻底解决非交互式 Shell 找不到语言环境或安装包时报错权限不足的问题：
-- **Node.js**: Node.js LTS, `npm`, `pnpm` (自动配置 npm 全局目录至 `~/.npm-global`)
-- **Bun**: 极速 JavaScript 运行时
-- **Python3**: Python 3, `pip`, `venv` (自动配置 pip 默认使用 `--user` 用户空间隔离)
-- **Rust**: `rustup`, `cargo`
-- **Go**: Golang 编译器与工具链
-- **Java**: OpenJDK 17 LTS
-
-### 5. 容器与重型系统 (Heavy systems)
-- **Docker & Docker Compose**: 自动将当前用户加入 `docker` 用户组，实现**免 sudo 运行**容器
-
-### 6. 移动端 SDK (Mobile SDKs)
-- **Android SDK**: `cmdline-tools`, 自动同意 Google Licenses，全局配置 `ANDROID_HOME`，`adb` 映射至全局
-- **Flutter SDK**: 全局配置 Flutter 工具链
-
-### 7. 应用级工具 (Application level tools)
-- **Sentry CLI**: `sentry-cli`
-
-### 8. AI 编程代理与技能插件 (AI Coding Agents & Skills)
-自动安装主流 AI Agent 及其官方推荐的效率技能（Skills）：
-
-* **Claude Code** (`@anthropic-ai/claude-code`)
-  - [everything-claude-code](https://github.com/affaan-m/everything-claude-code): 代理性能优化系统
-  - [claude-mem](https://install.cmem.ai): 持久化记忆插件
-  - [openclaw](https://install.cmem.ai): 记忆网关
-  - [rtk](https://github.com/rtk-ai/rtk)
-  - [pua](https://github.com/tanweai/pua)
-  - [gstack](https://github.com/garrytan/gstack): 包含多角色的虚拟工程团队技能
-  - [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
-  - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode): 多代理编排工具
-  - [graphify](https://github.com/safishamsi/graphify): 知识图谱生成查询工具
-
-* **Codex** (`@openai/codex`)
-  - `ecc-universal`
-  - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)
-  - [gstack](https://github.com/garrytan/gstack)
-  - [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
-
-* **OpenCode** (`opencode.ai/install`)
-  - [claude-mem](https://install.cmem.ai) (OpenCode 平台版本)
-  - [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) (OpenCode 平台版本)
-  - [graphify](https://github.com/safishamsi/graphify) (OpenCode 平台版本)
+| 顺序 | 分类 (Category) | 安装项及简介 | 安装内容 (命令/包名) |
+| :--- | :--- | :--- | :--- |
+| 1 | **基础系统与网络**<br>(Base system & Net) | **基础工具**: 确保网络探测与文件解压畅通无阻 | `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` |
+| 1 | **编译构建**<br>(C/C++ build tools) | **编译工具链**: 原生扩展编译与本地数据存储 | `gcc`, `make`, `cmake`, `ninja-build`, `sqlite3` |
+| 2 | **核心 CLI 工具**<br>(Core CLI utilities) | **现代化命令行**: 极速搜索、诊断与数据处理 | `jq`, `ripgrep (rg)`, `bat`, `fd`, `tree`, `btop`, `lsof`, `strace`, `dnsutils`, `yq`, `fzf`, `gh` |
+| 3 | **AI 环境依赖**<br>(AI Dependencies) | **多媒体与网页自动化**: 供 AI 代理调用的底层依赖 | `ffmpeg`, `imagemagick`, `poppler-utils`, `tesseract-ocr`, `xvfb`, `libnss3` |
+| 4 | **编程语言与运行时**<br>(Languages & Runtimes) | **全局优化的开发语言**: 避免 AI 权限受限报错 | **Node.js** (LTS, `npm`, `pnpm`), **Bun**, **Python 3** (`pip`, `venv`), **Rust** (`rustup`, `cargo`), **Go**, **Java** (OpenJDK 17) |
+| 5 | **容器与重型系统**<br>(Heavy systems) | **Docker SDK**: 免 sudo 运行容器 | `docker`, `docker-compose` |
+| 6 | **移动端 SDK**<br>(Mobile SDKs) | **移动开发工具链**: 自动同意协议及配置环境变量 | `Android SDK` (`cmdline-tools`, `adb`), `Flutter SDK` |
+| 7 | **应用级工具**<br>(App level tools) | **监控及其他平台工具** | `sentry-cli` |
+| 8 | **AI 编程代理**<br>(AI Coding Agents) | **主流 AI 编程 CLI**: 会自动检查并更新到最新版 | **Claude Code** (`@anthropic-ai/claude-code`)<br>**OpenCode** (`opencode.ai/install`)<br>**Codex** (`@openai/codex`) |
+| 9 | **代理技能插件**<br>(AI Agent Skills) | **通用的代理增强插件**: 为上述代理注入技能与记忆 | **everything-claude-code** (`./install.sh`)<br>**claude-mem** (`npx claude-mem install`)<br>**openclaw** (`install.cmem.ai/openclaw.sh`)<br>**rtk** (`rtk-ai/rtk/install.sh`)<br>**pua** (`npx skills add tanweai/pua`)<br>**gstack** (`./setup`)<br>**ui-ux-pro-max-skill** (`uipro init`)<br>**oh-my-claudecode** (`omc setup`)<br>**graphify** (`graphify install`) |
 
 *(注：系统也会自动为当前 IDE Trae 注册 graphify 插件)*
 

@@ -26,7 +26,7 @@ async fn main() -> Result<()> {
 
             // Request sudo upfront
             core::sudo::ensure_sudo()?;
-            
+
             // Setup daily update
             let _ = systemd::setup_daily_update();
 
@@ -61,8 +61,9 @@ async fn main() -> Result<()> {
                     tui::Component::ClaudeCode => installers::ai_agents::install_claude_code(),
                     tui::Component::Codex => installers::ai_agents::install_codex(),
                     tui::Component::OpenCode => installers::ai_agents::install_opencode(),
+                    tui::Component::AISkills => installers::ai_agents::install_ai_skills(),
                 };
-                
+
                 let status_val = match status {
                     Ok(s) => s,
                     Err(e) => {
@@ -80,13 +81,13 @@ async fn main() -> Result<()> {
         Commands::Update => {
             println!("🔄 Updating all components...");
             core::sudo::ensure_sudo()?;
-            
+
             let mut summary = Vec::new();
-            
+
             println!("⏳ Updating APT Packages...");
             let apt_res = installers::apt::update()
                 .and_then(|_| installers::apt::install(&["--only-upgrade", "nodejs", "python3", "docker-ce", "gh", "jq", "ripgrep"]));
-            
+
             summary.push(crate::core::models::ToolInfo {
                 name: "APT Packages".to_string(),
                 status: if let Err(e) = &apt_res {
@@ -97,7 +98,7 @@ async fn main() -> Result<()> {
                     crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
-            
+
             println!("⏳ Updating NPM Global Packages...");
             let npm_res = core::cmd::run_sudo_cmd("npm", &["update", "-g"]);
             summary.push(crate::core::models::ToolInfo {
@@ -149,7 +150,7 @@ async fn main() -> Result<()> {
                     crate::core::models::InstallStatus::Updated("latest".to_string())
                 },
             });
-            
+
             println!("✅ Update process completed.");
             crate::summary::print_summary(&summary);
         }
@@ -162,7 +163,7 @@ async fn main() -> Result<()> {
             let mut summary = Vec::new();
             for comp in tui::Component::all() {
                 let name = format!("{:?}", comp);
-                
+
                 let (cmd_name, version_fn): (&str, fn() -> String) = match comp {
                     tui::Component::NodeJs => ("node", crate::core::version::get_node_version),
                     tui::Component::Python => ("python3", crate::core::version::get_python_version),
@@ -189,6 +190,7 @@ async fn main() -> Result<()> {
                     tui::Component::ClaudeCode => ("claude", || crate::core::version::get_generic_version("claude")),
                     tui::Component::Codex => ("codex", || crate::core::version::get_generic_version("codex")),
                     tui::Component::OpenCode => ("opencode", || crate::core::version::get_generic_version("opencode")),
+                    tui::Component::AISkills => ("npm", || String::from("installed")), // Dummy check since skills don't have a single version command
                 };
 
                 let status = if crate::core::cmd::command_exists(cmd_name) {
@@ -196,7 +198,7 @@ async fn main() -> Result<()> {
                 } else {
                     crate::core::models::InstallStatus::NotInstalled
                 };
-                
+
                 summary.push(crate::core::models::ToolInfo { name, status });
             }
             crate::summary::print_summary(&summary);
