@@ -162,7 +162,7 @@ devenv-cli install
 | :--- | :--- | :--- |
 | **Claude Code** | Anthropic 官方命令行 AI 代理<br>🔗 [官网/Docs](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | `npm install -g @anthropic-ai/claude-code@latest` |
 | **OpenCode** | 开源的高性能命令行 AI 代理<br>🔗 [GitHub](https://github.com/opencode-ai/opencode) / [官网](https://opencode.ai/) | `curl -fsSL https://opencode.ai/install \| bash` |
-| **Codex** | OpenAI 驱动的代码生成 CLI<br>🔗 [GitHub/npm](https://www.npmjs.com/package/@openai/codex) | `npm install -g @openai/codex@latest` |
+| **Codex** | OpenAI 驱动的代码生成 CLI<br>🔗 [GitHub/npm](https://www.npmjs.com/package/@openai/codex) | `apt-get install bubblewrap`<br>`npm install -g @openai/codex@latest` |
 
 ### 9. 代理技能插件 (AI Agent Skills)
 为已安装的 AI 代理注入“通用技能”、“长期记忆”与“知识图谱”，让你的代理表现得像一个资深工程师团队。系统会根据步骤 8 检测到的代理，自动为它们注册适用的插件（包含向 Claude Code, OpenCode 和 Codex 的环境注入）。

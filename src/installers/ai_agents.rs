@@ -1,4 +1,5 @@
 use crate::core::cmd;
+use super::apt;
 use anyhow::Result;
 use crate::core::models::InstallStatus;
 use crate::core::version;
@@ -40,6 +41,12 @@ pub fn install_claude_code() -> Result<InstallStatus> {
 pub fn install_codex() -> Result<InstallStatus> {
     if !cmd::command_exists("npm") {
         anyhow::bail!("npm is required to install Codex. Please install Node.js first.");
+    }
+
+    if !cmd::command_exists("bwrap") {
+        println!("⏳ Installing bubblewrap (sandbox dependency for Codex)...");
+        let _ = apt::update();
+        let _ = apt::install(&["bubblewrap"]);
     }
 
     println!("⏳ Installing/Updating Codex via npm...");
