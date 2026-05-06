@@ -158,26 +158,26 @@ devenv-cli install
 ### 8. AI 编程代理 (AI Coding Agents)
 全自动检查并安装/更新当前最主流的基于终端的 AI 编程助手。
 
-| 工具/环境 | 简介 | 安装方式/命令 |
+| 工具/环境 | 简介及官方源 | 安装方式/命令 |
 | :--- | :--- | :--- |
-| **Claude Code** | Anthropic 官方命令行 AI 代理 | `npm install -g @anthropic-ai/claude-code@latest` |
-| **OpenCode** | 开源的高性能命令行 AI 代理 | `curl -fsSL https://opencode.ai/install \| bash` |
-| **Codex** | OpenAI 驱动的代码生成 CLI | `npm install -g @openai/codex@latest` |
+| **Claude Code** | Anthropic 官方命令行 AI 代理<br>🔗 [官网/Docs](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | `npm install -g @anthropic-ai/claude-code@latest` |
+| **OpenCode** | 开源的高性能命令行 AI 代理<br>🔗 [GitHub](https://github.com/opencode-ai/opencode) / [官网](https://opencode.ai/) | `curl -fsSL https://opencode.ai/install \| bash` |
+| **Codex** | OpenAI 驱动的代码生成 CLI<br>🔗 [GitHub/npm](https://www.npmjs.com/package/@openai/codex) | `npm install -g @openai/codex@latest` |
 
 ### 9. 代理技能插件 (AI Agent Skills)
-为已安装的 AI 代理注入“通用技能”、“长期记忆”与“知识图谱”，让你的代理表现得像一个资深工程师团队。系统会根据步骤 8 检测到的代理，自动为它们注册适用的插件。
+为已安装的 AI 代理注入“通用技能”、“长期记忆”与“知识图谱”，让你的代理表现得像一个资深工程师团队。系统会根据步骤 8 检测到的代理，自动为它们注册适用的插件（包含向 Claude Code, OpenCode 和 Codex 的环境注入）。
 
-| 工具/环境 | 简介 | 安装方式/命令 |
+| 技能插件 | 简介及官方源 | 安装与平台注入命令 |
 | :--- | :--- | :--- |
-| **everything-claude-code** | 代理性能优化及记忆系统 | `git clone ... && npm install && ./install.sh --profile full` |
-| **claude-mem** | Claude 与 OpenCode 的持久化记忆插件 | `npx -y claude-mem install` |
-| **openclaw** | CMEM 记忆网关 | `curl -fsSL https://install.cmem.ai/openclaw.sh \| bash` |
-| **rtk** | 实时知识注入工具 | `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh \| sh` |
-| **pua** | 增强提示词技能 | `npx -y skills add tanweai/pua --skill pua` |
-| **gstack** | 包含多角色的虚拟工程团队技能 | `git clone ... ~/gstack && ./setup` |
-| **ui-ux-pro-max-skill** | UI/UX 前端代码增强技能 | `npm install -g uipro-cli && uipro init` |
-| **oh-my-claudecode** | 多代理编排工具 | `npm install -g oh-my-claude-sisyphus@latest && omc setup` |
-| **graphify** | 代码库知识图谱生成查询工具 (包含 Trae 适配) | `pipx install graphifyy`<br>`graphify install` |
+| **everything-claude-code** | 代理性能优化及记忆系统<br>🔗 [GitHub Repo](https://github.com/affaan-m/everything-claude-code) | **通用安装**: `git clone ... && npm install && ./install.sh --profile full`<br>**全局注入**: `npm install -g ecc-universal` |
+| **claude-mem** | Claude 与 OpenCode 的持久化记忆插件<br>🔗 [官网/Docs](https://cmem.ai/) | **Claude Code**: `npx -y claude-mem install`<br>**OpenCode**: `npx -y claude-mem install --ide opencode` |
+| **OpenClaw (CMEM)** | 基于 CMEM 的大模型记忆网关<br>🔗 [安装脚本源](https://install.cmem.ai/openclaw.sh) | **网关安装**: `curl -fsSL https://install.cmem.ai/openclaw.sh \| bash` |
+| **rtk** | 实时知识注入工具<br>🔗 [GitHub Repo](https://github.com/rtk-ai/rtk) | **通用安装**: `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh \| sh` |
+| **pua** | 增强提示词技能<br>🔗 [GitHub Repo](https://github.com/tanweai/pua) | **通用技能**: `npx -y skills add tanweai/pua --skill pua` |
+| **gstack** | 包含多角色的虚拟工程团队技能<br>🔗 [GitHub Repo](https://github.com/garrytan/gstack) | **Claude Code**: `git clone ... ~/gstack && ./setup`<br>**Codex**: 复制 `gstack` 到 `~/.codex/skills/gstack` |
+| **ui-ux-pro-max-skill** | UI/UX 前端代码增强技能<br>🔗 [GitHub Repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | **基础环境**: `npm install -g uipro-cli`<br>**Claude Code**: `uipro init --ai claude`<br>**OpenCode**: `uipro init --ai opencode`<br>**Codex**: 复制技能到 `~/.codex/skills/` |
+| **oh-my-claudecode** | 多代理编排工具<br>🔗 [GitHub Repo](https://github.com/Yeachan-Heo/oh-my-claudecode) | **基础包**: `npm install -g oh-my-claude-sisyphus@latest`<br>**Claude Code**: `omc setup` |
+| **graphify** | 代码库知识图谱生成查询工具<br>🔗 [GitHub Repo](https://github.com/safishamsi/graphify) | **基础环境**: `pipx install graphifyy`<br>**Claude Code**: `graphify install`<br>**OpenCode**: `graphify install --platform opencode`<br>**Trae IDE**: `graphify install --platform trae` |
 
 ---
 
