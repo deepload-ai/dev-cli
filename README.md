@@ -92,6 +92,8 @@ devenv-cli install
 ### 1. 基础系统与编译构建
 提供服务器最基础的网络、系统工具以及 C/C++ 扩展编译环境。
 
+*(注：系统会在安装任何包前自动执行 `apt-get update` 以确保软件源为最新。)*
+
 | 工具/环境 | 简介 | 安装方式/命令 |
 | :--- | :--- | :--- |
 | **基础网络与系统** | 确保网络探测与文件解压畅通无阻 | `apt-get install curl git wget zip unzip tar netcat-openbsd psmisc` |
@@ -126,7 +128,7 @@ devenv-cli install
 | :--- | :--- | :--- |
 | **Node.js & pnpm** | Node.js 22.x LTS (自动配置 npm 目录至 `~/.npm-global`) | `curl -fsSL https://deb.nodesource.com/setup_22.x \| bash -`<br>`apt-get install nodejs`<br>`mkdir -p ~/.npm-global`<br>`npm config set prefix '~/.npm-global'`<br>`echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc`<br>`npm install -g pnpm` |
 | **Bun** | 极速 JavaScript 运行时 | `curl -fsSL https://bun.sh/install \| bash` |
-| **Python 3** | Python 及虚拟环境 (默认配置 pip 使用 `--user`) | `apt-get install python3 python3-pip python3-venv` |
+| **Python 3** | Python 及虚拟环境 (默认配置 pip 使用 `--user`) | `apt-get install python3 python3-pip python3-venv`<br>`pip config set global.user true`<br>`echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc` |
 | **Rust** | Rust 语言编译器与包管理器 | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
 | **Go** | Golang 编译器 | `apt-get install golang-go` |
 | **Java** | OpenJDK 17 LTS | `apt-get install openjdk-17-jdk openjdk-17-jre` |
@@ -136,15 +138,15 @@ devenv-cli install
 
 | 工具/环境 | 简介 | 安装方式/命令 |
 | :--- | :--- | :--- |
-| **Docker Engine** | Docker 引擎及 Docker Compose (自动加入 docker 用户组) | `apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin` |
+| **Docker Engine** | Docker 引擎及 Docker Compose (自动加入 docker 用户组) | `apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin`<br>`usermod -aG docker $USER`<br>`newgrp docker` |
 
 ### 6. 移动端 SDK
 安卓及 Flutter 跨平台移动端开发工具链。
 
 | 工具/环境 | 简介 | 安装方式/命令 |
 | :--- | :--- | :--- |
-| **Android SDK** | 包含 cmdline-tools 与 adb，自动同意所有 License | 下载解压官方 cmdline-tools 并配置 `ANDROID_HOME` |
-| **Flutter SDK** | Google 跨平台 UI 框架 | `git clone https://github.com/flutter/flutter.git` 并配置环境变量 |
+| **Android SDK** | 包含 cmdline-tools 与 adb，自动同意所有 License | `wget https://dl.google.com/android/repository/commandlinetools-linux-*.zip`<br>`mkdir -p ~/android-sdk/cmdline-tools`<br>`unzip cmdline-tools...`<br>`echo 'export ANDROID_HOME=~/android-sdk' >> ~/.bashrc`<br>`yes \| sdkmanager --licenses` |
+| **Flutter SDK** | Google 跨平台 UI 框架 | `git clone https://github.com/flutter/flutter.git -b stable ~/flutter`<br>`echo 'export PATH=~/flutter/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc`<br>`flutter precache` |
 
 ### 7. 应用级工具
 监控及错误追踪等上层开发工具。
@@ -175,7 +177,7 @@ devenv-cli install
 | **gstack** | 包含多角色的虚拟工程团队技能 | `git clone ... ~/gstack && ./setup` |
 | **ui-ux-pro-max-skill** | UI/UX 前端代码增强技能 | `npm install -g uipro-cli && uipro init` |
 | **oh-my-claudecode** | 多代理编排工具 | `npm install -g oh-my-claude-sisyphus@latest && omc setup` |
-| **graphify** | 代码库知识图谱生成查询工具 (包含 Trae 适配) | `pipx install graphifyy && graphify install` |
+| **graphify** | 代码库知识图谱生成查询工具 (包含 Trae 适配) | `pipx install graphifyy`<br>`graphify install` |
 
 ---
 
