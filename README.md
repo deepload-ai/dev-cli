@@ -128,7 +128,7 @@ devenv-cli install
 | :--- | :--- | :--- |
 | **Node.js & pnpm** | Node.js 22.x LTS (自动配置 npm 目录至 `~/.npm-global`) | `curl -fsSL https://deb.nodesource.com/setup_22.x \| bash -`<br>`apt-get install nodejs`<br>`mkdir -p ~/.npm-global`<br>`npm config set prefix '~/.npm-global'`<br>`echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc`<br>`npm install -g pnpm` |
 | **Bun** | 极速 JavaScript 运行时 | `curl -fsSL https://bun.sh/install \| bash` |
-| **Python 3** | Python 及虚拟环境 (默认配置 pip 使用 `--user`) | `apt-get install python3 python3-pip python3-venv`<br>`pip config set global.user true`<br>`echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc` |
+| **Python 3 & uv & pipx** | Python、虚拟环境及现代包管理工具 | `apt-get install python3 python3-pip python3-venv pipx`<br>`pip config set global.user true`<br>`pipx ensurepath`<br>`curl -LsSf https://astral.sh/uv/install.sh \| sh`<br>`echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc` |
 | **Rust** | Rust 语言编译器与包管理器 | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
 | **Go** | Golang 编译器 | `apt-get install golang-go` |
 | **Java** | OpenJDK 17 LTS | `apt-get install openjdk-17-jdk openjdk-17-jre` |
