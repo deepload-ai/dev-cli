@@ -85,18 +85,73 @@ devenv-cli install
 
 ---
 
-## 📦 支持的环境与工具
+## 📦 支持的环境与工具 (安装清单)
 
-无论你是做前端、后端、还是移动端跨平台开发，这里应有尽有。
+无论你是做前端、后端、还是移动端跨平台开发，这里应有尽有。工具会严格按照以下归类和顺序依次进行安装：
 
-| 分类 | 包含的组件 | AI 代理优化点 |
-| :--- | :--- | :--- |
-| **基础与网络** | `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` | 确保网络探测与文件解压畅通无阻 |
-| **编译与底层** | `build-essential` (gcc/make), `cmake`, `ninja-build`, `sqlite3` | 原生扩展编译与本地数据存储的基础 |
-| **现代编程语言** | `Node.js` (LTS) + `pnpm`<br>`Python3` + `pip` + `venv`<br>`Rust` (`cargo`, `rustup`)<br>`Go` (golang)<br>`Bun` | 放弃 nvm/pyenv，采用**全局安装**或**软链接映射**。<br>针对 `EACCES` 报错：<br>1. 自动配置 `npm` 全局目录至 `~/.npm-global`<br>2. 自动配置 `pip` 默认使用 `--user` 用户空间隔离<br>彻底解决 AI 找不到语言环境或安装包时报错权限不足的问题 |
-| **移动与跨平台** | `Java` (OpenJDK 17 LTS)<br>`Android SDK` (cmdline-tools)<br>`Flutter SDK` | 自动同意 Google Licenses，全局配置 `JAVA_HOME` 和 `ANDROID_HOME`，`adb` 和 `flutter` 映射至全局 |
-| **部署与容器** | `Docker`, `Docker Compose` | 自动将当前用户加入 `docker` 用户组，实现**免 sudo 运行**容器 |
-| **AI 专属分析库** | `bat` (高亮 cat)<br>`fd` (极速查找)<br>`ripgrep` (极速正则搜索)<br>`jq` (JSON 解析)<br>`tree`, `btop`, `gh`, `sentry-cli` | 让 AI 代理具备远超系统自带工具的代码扫描与结构理解能力 |
+### 1. 基础系统与编译构建 (Base system & C/C++ build tools)
+- **Base & Net**: `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` (确保网络探测与文件解压畅通无阻)
+- **Build Essential**: `gcc`, `make`
+- **CMake & Ninja**: `cmake`, `ninja-build`
+- **SQLite3**: `sqlite3`
+
+### 2. 核心 CLI 工具 (Core CLI utilities)
+- **jq**: 轻量级命令行 JSON 处理器
+- **ripgrep (rg)**: 极速正则搜索工具
+- **AI Analysis Tools**: `bat` (带高亮的 cat), `fd` (极速查找), `tree`, `btop`
+- **System Diagnostics**: `lsof`, `strace`, `dnsutils`, 等系统诊断工具
+- **Data & Search Tools**: `yq` (YAML处理), `fzf` (模糊查找)
+- **GitHub CLI**: `gh`
+
+### 3. AI 环境与依赖 (AI Environments & Dependencies)
+- **AI Media & Docs**: `ffmpeg`, `imagemagick`, `poppler-utils`, `tesseract-ocr` (AI 处理多媒体与文档的依赖)
+- **Web Automation Deps**: `xvfb`, `libnss3` 等 Playwright/Puppeteer 自动化浏览器测试底层依赖
+
+### 4. 编程语言与运行时 (Languages and runtimes)
+放弃 nvm/pyenv，针对 AI 代理优化了**全局安装**或**软链接映射**，彻底解决非交互式 Shell 找不到语言环境或安装包时报错权限不足的问题：
+- **Node.js**: Node.js LTS, `npm`, `pnpm` (自动配置 npm 全局目录至 `~/.npm-global`)
+- **Bun**: 极速 JavaScript 运行时
+- **Python3**: Python 3, `pip`, `venv` (自动配置 pip 默认使用 `--user` 用户空间隔离)
+- **Rust**: `rustup`, `cargo`
+- **Go**: Golang 编译器与工具链
+- **Java**: OpenJDK 17 LTS
+
+### 5. 容器与重型系统 (Heavy systems)
+- **Docker & Docker Compose**: 自动将当前用户加入 `docker` 用户组，实现**免 sudo 运行**容器
+
+### 6. 移动端 SDK (Mobile SDKs)
+- **Android SDK**: `cmdline-tools`, 自动同意 Google Licenses，全局配置 `ANDROID_HOME`，`adb` 映射至全局
+- **Flutter SDK**: 全局配置 Flutter 工具链
+
+### 7. 应用级工具 (Application level tools)
+- **Sentry CLI**: `sentry-cli`
+
+### 8. AI 编程代理与技能插件 (AI Coding Agents & Skills)
+自动安装主流 AI Agent 及其官方推荐的效率技能（Skills）：
+
+* **Claude Code** (`@anthropic-ai/claude-code`)
+  - [everything-claude-code](https://github.com/affaan-m/everything-claude-code): 代理性能优化系统
+  - [claude-mem](https://install.cmem.ai): 持久化记忆插件
+  - [openclaw](https://install.cmem.ai): 记忆网关
+  - [rtk](https://github.com/rtk-ai/rtk)
+  - [pua](https://github.com/tanweai/pua)
+  - [gstack](https://github.com/garrytan/gstack): 包含多角色的虚拟工程团队技能
+  - [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+  - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode): 多代理编排工具
+  - [graphify](https://github.com/safishamsi/graphify): 知识图谱生成查询工具
+
+* **Codex** (`@openai/codex`)
+  - `ecc-universal`
+  - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)
+  - [gstack](https://github.com/garrytan/gstack)
+  - [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
+
+* **OpenCode** (`opencode.ai/install`)
+  - [claude-mem](https://install.cmem.ai) (OpenCode 平台版本)
+  - [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) (OpenCode 平台版本)
+  - [graphify](https://github.com/safishamsi/graphify) (OpenCode 平台版本)
+
+*(注：系统也会自动为当前 IDE Trae 注册 graphify 插件)*
 
 ---
 
