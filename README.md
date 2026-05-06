@@ -124,7 +124,7 @@ devenv-cli install
 
 | 工具/环境 | 简介 | 安装方式/命令 |
 | :--- | :--- | :--- |
-| **Node.js & pnpm** | Node.js 22.x LTS (自动配置 npm 目录至 `~/.npm-global`) | `apt-get install nodejs npm` 然后修改 npm prefix |
+| **Node.js & pnpm** | Node.js 22.x LTS (自动配置 npm 目录至 `~/.npm-global`) | `curl -fsSL https://deb.nodesource.com/setup_22.x \| bash -`<br>`apt-get install nodejs`<br>`mkdir -p ~/.npm-global`<br>`npm config set prefix '~/.npm-global'`<br>`echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc`<br>`npm install -g pnpm` |
 | **Bun** | 极速 JavaScript 运行时 | `curl -fsSL https://bun.sh/install \| bash` |
 | **Python 3** | Python 及虚拟环境 (默认配置 pip 使用 `--user`) | `apt-get install python3 python3-pip python3-venv` |
 | **Rust** | Rust 语言编译器与包管理器 | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
