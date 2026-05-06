@@ -89,20 +89,93 @@ devenv-cli install
 
 无论你是做前端、后端、还是移动端跨平台开发，这里应有尽有。工具会严格按照以下归类和顺序依次进行安装：
 
-| 顺序 | 分类 (Category) | 安装项及简介 | 安装内容 (命令/包名) |
-| :--- | :--- | :--- | :--- |
-| 1 | **基础系统与网络**<br>(Base system & Net) | **基础工具**: 确保网络探测与文件解压畅通无阻 | `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` |
-| 1 | **编译构建**<br>(C/C++ build tools) | **编译工具链**: 原生扩展编译与本地数据存储 | `gcc`, `make`, `cmake`, `ninja-build`, `sqlite3` |
-| 2 | **核心 CLI 工具**<br>(Core CLI utilities) | **现代化命令行**: 极速搜索、诊断与数据处理 | `jq`, `ripgrep (rg)`, `bat`, `fd`, `tree`, `btop`, `lsof`, `strace`, `dnsutils`, `yq`, `fzf`, `gh` |
-| 3 | **AI 环境依赖**<br>(AI Dependencies) | **多媒体与网页自动化**: 供 AI 代理调用的底层依赖 | `ffmpeg`, `imagemagick`, `poppler-utils`, `tesseract-ocr`, `xvfb`, `libnss3` |
-| 4 | **编程语言与运行时**<br>(Languages & Runtimes) | **全局优化的开发语言**: 避免 AI 权限受限报错 | **Node.js** (LTS, `npm`, `pnpm`), **Bun**, **Python 3** (`pip`, `venv`), **Rust** (`rustup`, `cargo`), **Go**, **Java** (OpenJDK 17) |
-| 5 | **容器与重型系统**<br>(Heavy systems) | **Docker SDK**: 免 sudo 运行容器 | `docker`, `docker-compose` |
-| 6 | **移动端 SDK**<br>(Mobile SDKs) | **移动开发工具链**: 自动同意协议及配置环境变量 | `Android SDK` (`cmdline-tools`, `adb`), `Flutter SDK` |
-| 7 | **应用级工具**<br>(App level tools) | **监控及其他平台工具** | `sentry-cli` |
-| 8 | **AI 编程代理**<br>(AI Coding Agents) | **主流 AI 编程 CLI**: 会自动检查并更新到最新版 | **Claude Code** (`@anthropic-ai/claude-code`)<br>**OpenCode** (`opencode.ai/install`)<br>**Codex** (`@openai/codex`) |
-| 9 | **代理技能插件**<br>(AI Agent Skills) | **通用的代理增强插件**: 为上述代理注入技能与记忆 | **everything-claude-code** (`./install.sh`)<br>**claude-mem** (`npx claude-mem install`)<br>**openclaw** (`install.cmem.ai/openclaw.sh`)<br>**rtk** (`rtk-ai/rtk/install.sh`)<br>**pua** (`npx skills add tanweai/pua`)<br>**gstack** (`./setup`)<br>**ui-ux-pro-max-skill** (`uipro init`)<br>**oh-my-claudecode** (`omc setup`)<br>**graphify** (`graphify install`) |
+### 1. 基础系统与编译构建
+提供服务器最基础的网络、系统工具以及 C/C++ 扩展编译环境。
 
-*(注：系统也会自动为当前 IDE Trae 注册 graphify 插件)*
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **基础网络与系统** | 确保网络探测与文件解压畅通无阻 | `apt-get install curl git wget zip unzip tar netcat-openbsd psmisc` |
+| **Build Essential** | 原生扩展编译基础套件 | `apt-get install build-essential gcc make` |
+| **CMake & Ninja** | 高级 C/C++ 构建系统 | `apt-get install cmake ninja-build` |
+| **SQLite3** | 轻量级本地数据存储 | `apt-get install sqlite3 libsqlite3-dev` |
+
+### 2. 核心 CLI 工具
+提供现代化、极速的搜索与分析能力，让 AI 代理能更高效地阅读代码库。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **jq** | 轻量级命令行 JSON 处理器 | `apt-get install jq` |
+| **ripgrep (rg)** | 极速正则搜索工具，替代 grep | `apt-get install ripgrep` |
+| **AI 分析工具** | 带高亮的查看、极速查找及系统资源查看 | `apt-get install bat fd-find tree btop` |
+| **系统诊断工具** | 用于进程与网络问题排查 | `apt-get install lsof strace dnsutils net-tools iproute2` |
+| **数据与搜索工具** | YAML 处理与模糊查找 | `add-apt-repository ppa:rmescandon/yq && apt-get install yq fzf` |
+| **GitHub CLI (gh)** | 命令行管理 PR 与 Issue | `apt-get install gh` |
+
+### 3. AI 环境依赖
+为 AI 代理提供处理多媒体、文档以及运行网页自动化的底层动态库。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **多媒体与文档依赖** | 用于处理图像、PDF 及 OCR | `apt-get install ffmpeg imagemagick poppler-utils tesseract-ocr` |
+| **Web 自动化依赖** | 供 Playwright / Puppeteer 在无头模式运行 | `apt-get install xvfb libnss3 libatk1.0-0 libx11-xcb1` |
+
+### 4. 编程语言与运行时
+完全放弃 nvm/pyenv，针对 AI 代理优化了**全局安装**或**软链接映射**，彻底解决非交互式 Shell 找不到环境或安装包时报错权限不足的问题。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **Node.js & pnpm** | Node.js 22.x LTS (自动配置 npm 目录至 `~/.npm-global`) | `apt-get install nodejs npm` 然后修改 npm prefix |
+| **Bun** | 极速 JavaScript 运行时 | `curl -fsSL https://bun.sh/install \| bash` |
+| **Python 3** | Python 及虚拟环境 (默认配置 pip 使用 `--user`) | `apt-get install python3 python3-pip python3-venv` |
+| **Rust** | Rust 语言编译器与包管理器 | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` |
+| **Go** | Golang 编译器 | `apt-get install golang-go` |
+| **Java** | OpenJDK 17 LTS | `apt-get install openjdk-17-jdk openjdk-17-jre` |
+
+### 5. 容器与重型系统
+提供标准的容器化运行环境，并自动配置免密码执行权限。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **Docker Engine** | Docker 引擎及 Docker Compose (自动加入 docker 用户组) | `apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin` |
+
+### 6. 移动端 SDK
+安卓及 Flutter 跨平台移动端开发工具链。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **Android SDK** | 包含 cmdline-tools 与 adb，自动同意所有 License | 下载解压官方 cmdline-tools 并配置 `ANDROID_HOME` |
+| **Flutter SDK** | Google 跨平台 UI 框架 | `git clone https://github.com/flutter/flutter.git` 并配置环境变量 |
+
+### 7. 应用级工具
+监控及错误追踪等上层开发工具。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **Sentry CLI** | Sentry 错误追踪平台的命令行工具 | `curl -sL https://sentry.io/get-cli/ \| bash` |
+
+### 8. AI 编程代理 (AI Coding Agents)
+全自动检查并安装/更新当前最主流的基于终端的 AI 编程助手。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **Claude Code** | Anthropic 官方命令行 AI 代理 | `npm install -g @anthropic-ai/claude-code@latest` |
+| **OpenCode** | 开源的高性能命令行 AI 代理 | `curl -fsSL https://opencode.ai/install \| bash` |
+| **Codex** | OpenAI 驱动的代码生成 CLI | `npm install -g @openai/codex@latest` |
+
+### 9. 代理技能插件 (AI Agent Skills)
+为已安装的 AI 代理注入“通用技能”、“长期记忆”与“知识图谱”，让你的代理表现得像一个资深工程师团队。系统会根据步骤 8 检测到的代理，自动为它们注册适用的插件。
+
+| 工具/环境 | 简介 | 安装方式/命令 |
+| :--- | :--- | :--- |
+| **everything-claude-code** | 代理性能优化及记忆系统 | `git clone ... && npm install && ./install.sh --profile full` |
+| **claude-mem** | Claude 与 OpenCode 的持久化记忆插件 | `npx -y claude-mem install` |
+| **openclaw** | CMEM 记忆网关 | `curl -fsSL https://install.cmem.ai/openclaw.sh \| bash` |
+| **rtk** | 实时知识注入工具 | `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh \| sh` |
+| **pua** | 增强提示词技能 | `npx -y skills add tanweai/pua --skill pua` |
+| **gstack** | 包含多角色的虚拟工程团队技能 | `git clone ... ~/gstack && ./setup` |
+| **ui-ux-pro-max-skill** | UI/UX 前端代码增强技能 | `npm install -g uipro-cli && uipro init` |
+| **oh-my-claudecode** | 多代理编排工具 | `npm install -g oh-my-claude-sisyphus@latest && omc setup` |
+| **graphify** | 代码库知识图谱生成查询工具 (包含 Trae 适配) | `pipx install graphifyy && graphify install` |
 
 ---
 
