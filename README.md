@@ -119,7 +119,7 @@ devenv-cli install
 | 工具/环境 | 简介 | 安装方式/命令 |
 | :--- | :--- | :--- |
 | **多媒体与文档依赖** | 用于处理图像、PDF 及 OCR | `apt-get install ffmpeg imagemagick poppler-utils tesseract-ocr` |
-| **Web 自动化依赖** | 供 Playwright / Puppeteer 在无头模式运行 | `apt-get install xvfb libnss3 libatk1.0-0 libx11-xcb1` |
+| **Web 自动化依赖** | 供 Playwright / Puppeteer 在无头模式运行，自动兼容 `libasound2` / `libasound2t64` | `apt-get install xvfb libnss3 libatk1.0-0 libx11-xcb1` |
 
 ### 4. 编程语言与运行时
 完全放弃 nvm/pyenv，针对 AI 代理优化了**全局安装**或**软链接映射**，彻底解决非交互式 Shell 找不到环境或安装包时报错权限不足的问题。

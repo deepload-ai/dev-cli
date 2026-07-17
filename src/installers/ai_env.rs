@@ -48,7 +48,6 @@ pub fn install_web_auto() -> Result<InstallStatus> {
         "xvfb", 
         "libnss3", 
         "libgbm-dev", 
-        "libasound2", 
         "libatk1.0-0",
         "libatk-bridge2.0-0",
         "libcups2",
@@ -62,6 +61,18 @@ pub fn install_web_auto() -> Result<InstallStatus> {
         "libpango-1.0-0",
         "libcairo2"
     ])?;
+
+    // Ubuntu 24.04 renamed libasound2 to libasound2t64, while older releases still use libasound2.
+    if let Err(err) = apt::install(&["libasound2"]) {
+        println!("⚠️ libasound2 is unavailable, retrying with libasound2t64...");
+        apt::install(&["libasound2t64"]).map_err(|fallback_err| {
+            anyhow::anyhow!(
+                "Failed to install audio dependency for web automation. libasound2 error: {}; libasound2t64 error: {}",
+                err,
+                fallback_err
+            )
+        })?;
+    }
     
     let ver = version::get_generic_version("xvfb-run");
     println!("{} Web Automation Dependencies installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);
