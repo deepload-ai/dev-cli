@@ -74,20 +74,20 @@ curl -fsSL https://raw.githubusercontent.com/deepload-ai/dev-cli/main/install.sh
 ```bash
 devenv-cli install --auto
 ```
-*工具会自动无阻塞地安装所有预设的最佳环境。*
+*工具会自动无阻塞地安装默认基础环境，优先覆盖 coding / AI agent 常用依赖，不包含移动端 SDK 和 AI CLI。*
 
 **▶ 方式二：人工自定义交互安装**
 如果你想自己挑选需要安装的组件：
 ```bash
 devenv-cli install
 ```
-*通过键盘 `↑` `↓` 移动，`Space` 勾选，`Enter` 确认。*
+*通过键盘 `↑` `↓` 移动，`Space` 勾选，`Enter` 确认；Android SDK、Flutter、Claude/Codex/OpenCode 等按需选择，默认不勾选。*
 
 ---
 
 ## 📦 支持的环境与工具 (安装清单)
 
-无论你是做前端、后端、还是移动端跨平台开发，这里应有尽有。工具会严格按照以下归类和顺序依次进行安装：
+默认基础环境优先覆盖 coding / AI agent 常用能力；移动端 SDK、AI CLI 和其他专项工具按需选择。工具会严格按照以下归类和顺序依次进行安装：
 
 ### 1. 基础系统与编译构建
 提供服务器最基础的网络、系统工具以及 C/C++ 扩展编译环境。
@@ -145,8 +145,8 @@ devenv-cli install
 
 | 工具/环境 | 简介 | 安装方式/命令 |
 | :--- | :--- | :--- |
-| **Android SDK** | 包含 cmdline-tools 与 adb，自动同意所有 License | `wget https://dl.google.com/android/repository/commandlinetools-linux-*.zip`<br>`mkdir -p ~/android-sdk/cmdline-tools`<br>`unzip cmdline-tools...`<br>`echo 'export ANDROID_HOME=~/android-sdk' >> ~/.bashrc`<br>`yes \| sdkmanager --licenses` |
-| **Flutter SDK** | Google 跨平台 UI 框架 | `git clone https://github.com/flutter/flutter.git -b stable ~/flutter`<br>`echo 'export PATH=~/flutter/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc`<br>`flutter precache` |
+| **Android SDK** | 包含 cmdline-tools、`adb` 与 `sdkmanager`，仅在真正开发 Android App 时才推荐安装，**默认不选** | `wget https://dl.google.com/android/repository/commandlinetools-linux-*.zip`<br>`mkdir -p ~/android-sdk/cmdline-tools`<br>`unzip cmdline-tools...`<br>`echo 'export ANDROID_HOME=~/android-sdk' >> ~/.bashrc`<br>`yes \| sdkmanager --licenses` |
+| **Flutter SDK** | Google 跨平台 UI 框架，移动端开发按需安装，**默认不选** | `git clone https://github.com/flutter/flutter.git -b stable ~/flutter`<br>`echo 'export PATH=~/flutter/bin:$PATH' >> ~/.bashrc`<br>`source ~/.bashrc`<br>`flutter precache` |
 
 ### 7. 应用级工具
 监控及错误追踪等上层开发工具。
@@ -160,24 +160,9 @@ devenv-cli install
 
 | 工具/环境 | 简介及官方源 | 安装方式/命令 |
 | :--- | :--- | :--- |
-| **Claude Code** | Anthropic 官方命令行 AI 代理<br>🔗 [官网/Docs](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | `npm install -g @anthropic-ai/claude-code@latest` |
-| **OpenCode** | 开源的高性能命令行 AI 代理<br>🔗 [GitHub](https://github.com/opencode-ai/opencode) / [官网](https://opencode.ai/) | `curl -fsSL https://opencode.ai/install \| bash` |
-| **Codex** | OpenAI 驱动的代码生成 CLI<br>🔗 [GitHub/npm](https://www.npmjs.com/package/@openai/codex) | `apt-get install bubblewrap`<br>`npm install -g @openai/codex@latest` |
-
-### 9. 代理技能插件 (AI Agent Skills)
-为已安装的 AI 代理注入“通用技能”、“长期记忆”与“知识图谱”，让你的代理表现得像一个资深工程师团队。系统会根据步骤 8 检测到的代理，自动为它们注册适用的插件（包含向 Claude Code, OpenCode 和 Codex 的环境注入）。
-
-| 技能插件 | 简介及官方源 | 安装与平台注入命令 |
-| :--- | :--- | :--- |
-| **everything-claude-code** | 代理性能优化及记忆系统<br>🔗 [GitHub Repo](https://github.com/affaan-m/everything-claude-code) | **通用安装**: `git clone ... && npm install && ./install.sh --profile full`<br>**全局注入**: `npm install -g ecc-universal` |
-| **claude-mem** | Claude 与 OpenCode 的持久化记忆插件<br>🔗 [官网/Docs](https://cmem.ai/) | **Claude Code**: `npx -y claude-mem install`<br>**OpenCode**: `npx -y claude-mem install --ide opencode` |
-| **OpenClaw (CMEM)** | 基于 CMEM 的大模型记忆网关<br>🔗 [安装脚本源](https://install.cmem.ai/openclaw.sh) | **网关安装**: `curl -fsSL https://install.cmem.ai/openclaw.sh \| bash` |
-| **rtk** | 实时知识注入工具<br>🔗 [GitHub Repo](https://github.com/rtk-ai/rtk) | **通用安装**: `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh \| sh` |
-| **pua** | 增强提示词技能<br>🔗 [GitHub Repo](https://github.com/tanweai/pua) | **通用技能**: `npx -y skills add tanweai/pua --skill pua` |
-| **gstack** | 包含多角色的虚拟工程团队技能<br>🔗 [GitHub Repo](https://github.com/garrytan/gstack) | **Claude Code**: `git clone ... ~/gstack && ./setup`<br>**Codex**: 复制 `gstack` 到 `~/.codex/skills/gstack` |
-| **ui-ux-pro-max-skill** | UI/UX 前端代码增强技能<br>🔗 [GitHub Repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | **基础环境**: `npm install -g uipro-cli`<br>**Claude Code**: `uipro init --ai claude`<br>**OpenCode**: `uipro init --ai opencode`<br>**Codex**: 复制技能到 `~/.codex/skills/` |
-| **oh-my-claudecode** | 多代理编排工具<br>🔗 [GitHub Repo](https://github.com/Yeachan-Heo/oh-my-claudecode) | **基础包**: `npm install -g oh-my-claude-sisyphus@latest`<br>**Claude Code**: `omc setup` |
-| **graphify** | 代码库知识图谱生成查询工具<br>🔗 [GitHub Repo](https://github.com/safishamsi/graphify) | **基础环境**: `pipx install graphifyy`<br>**Claude Code**: `graphify install`<br>**OpenCode**: `graphify install --platform opencode`<br>**Trae IDE**: `graphify install --platform trae` |
+| **Claude Code** | Anthropic 官方命令行 AI 代理，按需安装，**默认不选**<br>使用 Node.js 配置好的用户态 npm 全局目录，无需 `sudo`<br>🔗 [官网/Docs](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | `npm install -g @anthropic-ai/claude-code@latest` |
+| **OpenCode** | 开源的高性能命令行 AI 代理，按需安装，**默认不选**<br>🔗 [GitHub](https://github.com/opencode-ai/opencode) / [官网](https://opencode.ai/) | `curl -fsSL https://opencode.ai/install \| bash` |
+| **Codex** | OpenAI 驱动的代码生成 CLI，按需安装，**默认不选**<br>使用 Node.js 配置好的用户态 npm 全局目录，无需 `sudo`<br>🔗 [GitHub/npm](https://www.npmjs.com/package/@openai/codex) | `apt-get install bubblewrap`<br>`npm install -g @openai/codex@latest` |
 
 ---
 

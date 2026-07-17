@@ -74,29 +74,30 @@ Directly let your AI assistant (or yourself) execute:
 ```bash
 devenv-cli install --auto
 ```
-*The tool will automatically and non-blockingly install all preset optimal environments.*
+*The tool automatically installs the default coding / AI-agent baseline, excluding mobile SDKs and AI CLIs.*
 
 **▶ Method 2: Manual Custom Interactive Installation**
 If you want to pick and choose the components to install yourself:
 ```bash
 devenv-cli install
 ```
-*Use keyboard `↑` `↓` to move, `Space` to check, and `Enter` to confirm.*
+*Use keyboard `↑` `↓` to move, `Space` to check, and `Enter` to confirm. Android SDK, Flutter, Claude/Codex/OpenCode and other specialized tools are unchecked by default.*
 
 ---
 
 ## 📦 Supported Environments & Tools
 
-Whether you are doing frontend, backend, or mobile cross-platform development, everything is here.
+The default baseline focuses on tools commonly needed by coding workflows and AI agents. Mobile SDKs, AI CLIs, and other specialized stacks stay optional.
 
 | Category | Included Components | AI Agent Optimization Points |
 | :--- | :--- | :--- |
 | **Base & Network** | `curl`, `git`, `wget`, `zip`, `unzip`, `tar`, `nc`, `psmisc` | Ensures network probing and file decompression are unimpeded |
 | **Compilation & Core** | `build-essential` (gcc/make), `cmake`, `ninja-build`, `sqlite3` | Foundation for compiling native extensions and local data storage |
 | **Modern Programming Languages** | `Node.js` (LTS) + `pnpm`<br>`Python3` + `pip` + `venv`<br>`Rust` (`cargo`, `rustup`)<br>`Go` (golang)<br>`Bun` | Abandons nvm/pyenv, adopting **global installation** or **symlink mapping**.<br>To fix `EACCES` errors:<br>1. Auto-configures `npm` global prefix to `~/.npm-global`<br>2. Auto-configures `pip` to use `--user` space isolation by default<br>Completely solves AI permission denied errors when installing global packages. |
-| **Mobile & Cross-Platform** | `Java` (OpenJDK 17 LTS)<br>`Android SDK` (cmdline-tools)<br>`Flutter SDK` | Automatically accepts Google Licenses, globally configures `JAVA_HOME` and `ANDROID_HOME`, and maps `adb` and `flutter` globally |
+| **Mobile & Cross-Platform (Optional)** | `Java` (OpenJDK 17 LTS)<br>`Android SDK` (cmdline-tools, `adb`, `sdkmanager`)<br>`Flutter SDK` | For Android / Flutter app development only. These components are available in interactive install, but unchecked by default |
 | **Deployment & Containers** | `Docker`, `Docker Compose` | Automatically adds the current user to the `docker` group, enabling **sudo-free execution** of containers |
 | **AI Exclusive Analysis Libs** | `bat` (highlighted cat)<br>`fd` (blazing fast find)<br>`ripgrep` (blazing fast regex search)<br>`jq` (JSON parsing)<br>`tree`, `btop`, `gh`, `sentry-cli` | Gives AI agents code scanning and structural understanding capabilities far beyond built-in system tools |
+| **AI Coding Agents (Optional)** | `Claude Code`<br>`Codex`<br>`OpenCode` | Terminal AI CLIs are available for manual selection, but excluded from the default baseline to keep the base environment lean. Claude Code and Codex reuse the user-owned npm global prefix, so no `sudo npm -g` is needed |
 
 ---
 

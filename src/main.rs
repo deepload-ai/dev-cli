@@ -12,8 +12,8 @@ async fn main() -> Result<()> {
     match &cli.command {
         Commands::Install { auto } => {
             let selections = if *auto {
-                println!("🚀 Auto-installing all default components...");
-                tui::Component::all()
+                println!("🚀 Auto-installing the default coding and agent environment...");
+                tui::Component::default_components()
             } else {
                 let s = tui::select_components()?;
                 if s.is_empty() {
@@ -61,7 +61,6 @@ async fn main() -> Result<()> {
                     tui::Component::ClaudeCode => installers::ai_agents::install_claude_code(),
                     tui::Component::Codex => installers::ai_agents::install_codex(),
                     tui::Component::OpenCode => installers::ai_agents::install_opencode(),
-                    tui::Component::AISkills => installers::ai_agents::install_ai_skills(),
                 };
 
                 let status_val = match status {
@@ -100,7 +99,8 @@ async fn main() -> Result<()> {
             });
 
             println!("⏳ Updating NPM Global Packages...");
-            let npm_res = core::cmd::run_sudo_cmd("npm", &["update", "-g"]);
+            let npm_res = installers::lang::setup_npm_global_prefix()
+                .and_then(|_| core::cmd::run_cmd("npm", &["update", "-g"]));
             summary.push(crate::core::models::ToolInfo {
                 name: "NPM Global".to_string(),
                 status: if let Err(e) = &npm_res {
@@ -190,7 +190,6 @@ async fn main() -> Result<()> {
                     tui::Component::ClaudeCode => ("claude", || crate::core::version::get_generic_version("claude")),
                     tui::Component::Codex => ("codex", || crate::core::version::get_generic_version("codex")),
                     tui::Component::OpenCode => ("opencode", || crate::core::version::get_generic_version("opencode")),
-                    tui::Component::AISkills => ("npm", || String::from("installed")), // Dummy check since skills don't have a single version command
                 };
 
                 let status = if crate::core::cmd::command_exists(cmd_name) {

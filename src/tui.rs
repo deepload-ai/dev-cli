@@ -43,9 +43,6 @@ pub enum Component {
     ClaudeCode,
     Codex,
     OpenCode,
-
-    // 8. AI Agent Skills
-    AISkills,
 }
 
 impl Component {
@@ -76,7 +73,6 @@ impl Component {
             Component::ClaudeCode => "Claude Code",
             Component::Codex => "Codex",
             Component::OpenCode => "OpenCode",
-            Component::AISkills => "AI Agent Skills (ecc, claude-mem, rtk, gstack, graphify, etc)",
         }
     }
 
@@ -122,21 +118,47 @@ impl Component {
             Component::ClaudeCode,
             Component::Codex,
             Component::OpenCode,
-
-            // 8. AI Agent Skills
-            Component::AISkills,
         ]
+    }
+
+    pub fn is_default(&self) -> bool {
+        matches!(
+            self,
+            Component::Base
+                | Component::BuildEssential
+                | Component::CMakeNinja
+                | Component::Sqlite3
+                | Component::Jq
+                | Component::Ripgrep
+                | Component::AITools
+                | Component::SysDiag
+                | Component::DataTools
+                | Component::Gh
+                | Component::AIMedia
+                | Component::WebAuto
+                | Component::NodeJs
+                | Component::Python
+                | Component::Rust
+        )
+    }
+
+    pub fn default_components() -> Vec<Component> {
+        Self::all()
+            .into_iter()
+            .filter(|component| component.is_default())
+            .collect()
     }
 }
 
 pub fn select_components() -> Result<Vec<Component>> {
     let options = Component::all();
     let items: Vec<String> = options.iter().map(|c| c.name().to_string()).collect();
+    let defaults: Vec<bool> = options.iter().map(Component::is_default).collect();
 
     let selections = MultiSelect::with_theme(&ColorfulTheme::default())
         .with_prompt("Select components to install (Space to toggle, Enter to confirm)")
         .items(&items)
-        .defaults(&vec![true; items.len()])
+        .defaults(&defaults)
         .interact()?;
 
     let selected_components = selections
@@ -145,6 +167,34 @@ pub fn select_components() -> Result<Vec<Component>> {
         .collect();
 
     Ok(selected_components)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Component;
+
+    #[test]
+    fn default_components_exclude_optional_mobile_and_ai_tools() {
+        let defaults = Component::default_components();
+
+        assert!(!defaults.contains(&Component::AndroidSdk));
+        assert!(!defaults.contains(&Component::Flutter));
+        assert!(!defaults.contains(&Component::ClaudeCode));
+        assert!(!defaults.contains(&Component::Codex));
+        assert!(!defaults.contains(&Component::OpenCode));
+    }
+
+    #[test]
+    fn default_components_keep_core_coding_and_agent_prerequisites() {
+        let defaults = Component::default_components();
+
+        assert!(defaults.contains(&Component::Base));
+        assert!(defaults.contains(&Component::NodeJs));
+        assert!(defaults.contains(&Component::Python));
+        assert!(defaults.contains(&Component::Rust));
+        assert!(defaults.contains(&Component::WebAuto));
+        assert!(defaults.contains(&Component::AIMedia));
+    }
 }
 
 pub fn confirm_keep_data() -> Result<bool> {

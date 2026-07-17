@@ -15,19 +15,33 @@ fi
 
 # We fetch the latest release from GitHub
 REPO="deepload-ai/dev-cli"
-LATEST_RELEASE=$(curl -s https://api.github.com/repos/$REPO/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+API_URL="https://api.github.com/repos/$REPO/releases/latest"
+if ! RELEASE_JSON=$(curl -fsSL \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    "$API_URL"); then
+    echo "❌ Failed to query the latest GitHub release for $REPO."
+    echo "⚠️  This is usually caused by network issues, GitHub API rate limiting, or temporary GitHub errors."
+    echo "⚠️  Please retry later, or build from source using 'cargo build --release'."
+    exit 1
+fi
+
+LATEST_RELEASE=$(printf '%s\n' "$RELEASE_JSON" | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)
 
 if [ -z "$LATEST_RELEASE" ]; then
-    # Fallback if no release exists yet
-    echo "⚠️  No GitHub release found for $REPO yet. The CLI might not be published."
-    echo "⚠️  Please clone the repository and build from source using 'cargo build --release'."
+    echo "❌ GitHub API did not return a valid latest release tag for $REPO."
+    echo "⚠️  Please retry later, or build from source using 'cargo build --release'."
     exit 1
 fi
 
 URL="https://github.com/$REPO/releases/download/$LATEST_RELEASE/devenv-cli-$TARGET"
 echo "📥 Downloading devenv-cli $LATEST_RELEASE for $TARGET..."
 
-curl -sSfL "$URL" -o /tmp/devenv-cli
+if ! curl -sSfL "$URL" -o /tmp/devenv-cli; then
+    echo "❌ Found release $LATEST_RELEASE, but no downloadable asset was available for $TARGET."
+    echo "⚠️  Please check the GitHub release assets for your architecture, or build from source using 'cargo build --release'."
+    exit 1
+fi
 chmod +x /tmp/devenv-cli
 sudo mv /tmp/devenv-cli /usr/local/bin/devenv-cli
 

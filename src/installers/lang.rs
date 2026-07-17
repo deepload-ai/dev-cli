@@ -3,6 +3,7 @@ use super::apt;
 use anyhow::{Context, Result};
 use crate::core::models::InstallStatus;
 use crate::core::version;
+use std::path::Path;
 
 pub fn install_nodejs() -> Result<InstallStatus> {
     if cmd::command_exists("node") && cmd::command_exists("npm") {
@@ -31,7 +32,7 @@ pub fn install_nodejs() -> Result<InstallStatus> {
     Ok(InstallStatus::Installed(ver))
 }
 
-fn setup_npm_global_prefix() -> Result<()> {
+pub fn setup_npm_global_prefix() -> Result<()> {
     // To solve EACCES issues when AI agents (like Claude Code) try to `npm install -g`
     // We change the default npm global directory to a user-owned directory (~/.npm-global)
     // and link its bin folder to /usr/local/bin so AI agents can still find the executables
@@ -233,7 +234,14 @@ pub fn install_java() -> Result<InstallStatus> {
 }
 
 pub fn install_android_sdk() -> Result<InstallStatus> {
-    if cmd::command_exists("adb") && cmd::command_exists("sdkmanager") {
+    let home = std::env::var("HOME").context("Failed to get HOME env")?;
+    let android_home = format!("{}/Android/Sdk", home);
+    let adb_path = format!("{}/platform-tools/adb", android_home);
+    let sdkmanager_path = format!("{}/cmdline-tools/latest/bin/sdkmanager", android_home);
+
+    let sdk_installed = (cmd::command_exists("adb") && cmd::command_exists("sdkmanager"))
+        || (Path::new(&adb_path).exists() && Path::new(&sdkmanager_path).exists());
+    if sdk_installed {
         let ver = version::get_generic_version("adb");
         println!("{} Android SDK is already installed ({})", InstallStatus::AlreadyExists(String::new()).icon(), ver);
         return Ok(InstallStatus::AlreadyExists(ver));
@@ -242,9 +250,6 @@ pub fn install_android_sdk() -> Result<InstallStatus> {
     println!("⏳ Installing Android SDK (Command line tools)...");
     // Ensure Java is installed first
     install_java().ok();
-
-    let home = std::env::var("HOME").context("Failed to get HOME env")?;
-    let android_home = format!("{}/Android/Sdk", home);
 
     cmd::run_cmd("mkdir", &["-p", &format!("{}/cmdline-tools", android_home)])?;
 
@@ -278,8 +283,9 @@ pub fn install_android_sdk() -> Result<InstallStatus> {
     // Install basic platform tools
     cmd::run_cmd("bash", &["-c", &format!("{} \"platform-tools\" \"platforms;android-34\" \"build-tools;34.0.0\"", sdkmanager)])?;
 
-    // Expose adb to AI
-    let _ = cmd::run_sudo_cmd("ln", &["-sf", &format!("{}/platform-tools/adb", android_home), "/usr/local/bin/adb"]);
+    // Expose Android tools to AI agents and non-interactive shells
+    let _ = cmd::run_sudo_cmd("ln", &["-sf", &adb_path, "/usr/local/bin/adb"]);
+    let _ = cmd::run_sudo_cmd("ln", &["-sf", &sdkmanager_path, "/usr/local/bin/sdkmanager"]);
 
     let ver = version::get_generic_version("adb");
     println!("{} Android SDK installed successfully ({})", InstallStatus::Installed(String::new()).icon(), ver);

@@ -31,8 +31,8 @@ src/
 - 依赖：`clap` (用于命令行参数)，`dialoguer` (用于终端复选框)。
 - 工作流：
   1. `main.rs` 解析子命令 (`install`, `update`, `uninstall`)。
-  2. 若用户传入 `--auto`，跳过 TUI 渲染，直接全选 `Component::all()` 列表。
-  3. 否则，调用 `tui::select_components()` 展示交互式菜单。
+  2. 若用户传入 `--auto`，跳过 TUI 渲染，直接安装 `Component::default_components()` 里的默认基础环境。
+  3. 否则，调用 `tui::select_components()` 展示交互式菜单，并按组件默认策略预勾选基础项。
 
 ### 2.2 Sudo 权限生命周期管理
 AI 代理在运行过程中最大的痛点是交互式密码输入阻塞。
